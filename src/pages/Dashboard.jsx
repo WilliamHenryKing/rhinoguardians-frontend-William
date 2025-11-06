@@ -104,7 +104,7 @@ export default function Dashboard({ onAlert }) {
           </div>
         </div>
 
-        <div className="dashboard-detections">
+        {/* <div className="dashboard-detections">
           <div className="detections-header">
             <h3>Recent Detections</h3>
             {loading && <span className="loading-spinner">⟳</span>}
@@ -152,7 +152,7 @@ export default function Dashboard({ onAlert }) {
               )}
             </AnimatePresence>
           </motion.div>
-        </div>
+        </div> */}
       </div>
     </div>
   )
