@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Map from '../components/Map'
+import Sidebar from '../components/Sidebar'
 import { getMockDetections } from '../api/mockData'
 
 export default function Dashboard({ onAlert }) {
@@ -86,6 +87,12 @@ export default function Dashboard({ onAlert }) {
   return (
     <div className="page-dashboard">
       <div className="dashboard-layout">
+        <Sidebar
+          onFilterChange={handleFilterChange}
+          onRefresh={loadDetections}
+          detectionCount={filteredDetections.length}
+        />
+
         <div className="dashboard-main">
           <div className="map-section">
             <Map
