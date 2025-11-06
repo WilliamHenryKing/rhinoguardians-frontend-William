@@ -3,6 +3,7 @@ import './App.css'
 import { ThemeProvider } from './context/ThemeContext'
 import Header from './components/Header'
 import AlertNotification from './components/AlertNotification'
+import ParallaxBackground from './components/ParallaxBackground'
 import Dashboard from './pages/Dashboard'
 import History from './pages/History'
 import Analytics from './pages/Analytics'
@@ -58,19 +59,37 @@ export default function App() {
     }
   }
 
-  // Page transition variants
+  // Page transition variants - SaaS-grade smooth transitions
   const pageVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 }
+    initial: { opacity: 0, y: 24, scale: 0.96 },
+    animate: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.4,
+        ease: [0.4, 0, 0.2, 1],
+        staggerChildren: 0.05
+      }
+    },
+    exit: {
+      opacity: 0,
+      y: -24,
+      scale: 0.96,
+      transition: {
+        duration: 0.3,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    }
   }
 
   return (
     <ThemeProvider>
       <div className="app">
+        <ParallaxBackground />
         <Header currentPage={currentPage} onNavigate={handleNavigate} />
 
-        <main className="app-main">
+        <main className="app-main" style={{ position: 'relative', zIndex: 1 }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={currentPage}
@@ -78,7 +97,7 @@ export default function App() {
               animate="animate"
               exit="exit"
               variants={pageVariants}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              style={{ height: '100%' }}
             >
               {renderPage()}
             </motion.div>

@@ -16,15 +16,16 @@ export default function DetectionCard({ detection, isSelected, onClick }) {
     <motion.div
       className={`detection-card ${isSelected ? 'selected' : ''} threat-${threatLevel}`}
       onClick={onClick}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      whileHover={{ y: -4 }}
+      initial={{ opacity: 0, y: 24, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -24, scale: 0.95 }}
+      whileHover={{ y: -6, scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
       layout
       transition={{
-        duration: 0.3,
-        layout: { duration: 0.3 }
+        duration: 0.4,
+        ease: [0.4, 0, 0.2, 1],
+        layout: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
       }}
     >
       {detection.image_path && (
