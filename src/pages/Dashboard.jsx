@@ -4,6 +4,7 @@ import DetectionCard from '../components/DetectionCard'
 import Sidebar from '../components/Sidebar'
 import { getMockDetections, getMockAlerts } from '../api/mockData'
 import { motion, AnimatePresence } from 'framer-motion'
+import { panelAnimations } from '../utils/motionConfig'
 
 export default function Dashboard({ onAlert }) {
   const [detections, setDetections] = useState([])
@@ -88,21 +89,37 @@ export default function Dashboard({ onAlert }) {
 
   return (
     <div className="page-dashboard">
-      <div className="dashboard-layout">
-        <Sidebar
-          onFilterChange={handleFilterChange}
-          onRefresh={loadDetections}
-          detectionCount={filteredDetections.length}
-        />
+      <motion.div
+        className="dashboard-layout"
+        initial="animate"
+        animate="animate"
+        variants={panelAnimations.staggerContainer}
+      >
+        <motion.div variants={panelAnimations.staggerItem}>
+          <Sidebar
+            onFilterChange={handleFilterChange}
+            onRefresh={loadDetections}
+            detectionCount={filteredDetections.length}
+          />
+        </motion.div>
 
-        <div className="dashboard-main">
-          <div className="map-section">
+        <motion.div
+          className="dashboard-main"
+          variants={panelAnimations.staggerItem}
+        >
+          <motion.div
+            className="map-section"
+            initial={panelAnimations.fadeInUp.initial}
+            animate={panelAnimations.fadeInUp.animate}
+            transition={{ ...panelAnimations.fadeInUp.transition, delay: 0.15 }}
+            whileHover={{ scale: 1.005, boxShadow: '0 24px 48px rgba(0, 0, 0, 0.14)' }}
+          >
             <Map
               detections={filteredDetections}
               onMarkerClick={setSelectedDetection}
             />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* <div className="dashboard-detections">
           <div className="detections-header">
@@ -153,7 +170,7 @@ export default function Dashboard({ onAlert }) {
             </AnimatePresence>
           </motion.div>
         </div> */}
-      </div>
+      </motion.div>
     </div>
   )
 }

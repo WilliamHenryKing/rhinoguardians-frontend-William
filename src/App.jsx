@@ -83,10 +83,20 @@ export default function App() {
     }
   }
 
+  // Map page to parallax section mood
+  const getParallaxSection = (page) => {
+    const sectionMap = {
+      dashboard: 'detections',
+      history: 'history',
+      analytics: 'analytics'
+    }
+    return sectionMap[page] || 'default'
+  }
+
   return (
     <ThemeProvider>
       <div className="app">
-        <ParallaxBackground />
+        <ParallaxBackground section={getParallaxSection(currentPage)} />
         <Header currentPage={currentPage} onNavigate={handleNavigate} />
 
         <main className="app-main" style={{ position: 'relative', zIndex: 1 }}>
