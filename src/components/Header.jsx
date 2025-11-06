@@ -40,11 +40,12 @@ export default function Header({ currentPage, onNavigate }) {
       <motion.div
         className="header-content"
         animate={{
-          height: scrolled ? '64px' : '72px'
+          paddingTop: scrolled ? 'var(--space-4)' : 'var(--space-5)',
+          paddingBottom: scrolled ? 'var(--space-4)' : 'var(--space-5)'
         }}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       >
-        {/* LEFT: Brand */}
+        {/* TOP: Brand - Full Width Centered */}
         <div className="header-brand">
           <div className="header-logo-lockup">
             <motion.div
@@ -52,7 +53,7 @@ export default function Header({ currentPage, onNavigate }) {
               whileHover={{ rotate: [0, -10, 10, -10, 0] }}
               transition={{ duration: 0.5 }}
             >
-              <MdShield size={24} />
+              <MdShield size={32} />
             </motion.div>
             <div className="header-title-block">
               <h1 className="header-title">RhinoGuardians</h1>
@@ -63,59 +64,62 @@ export default function Header({ currentPage, onNavigate }) {
           </div>
         </div>
 
-        {/* CENTER: Nav */}
-        <nav className="header-nav">
-          {pages.map((page, index) => {
-            const Icon = page.icon
-            const isActive = currentPage === page.id
-            return (
-              <motion.button
-                key={page.id}
-                className={`nav-button ${isActive ? 'active' : ''}`}
-                onClick={() => onNavigate(page.id)}
-                whileHover={{ y: -1, scale: 1.02 }}
-                whileTap={{ y: 0, scale: 0.98 }}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.2,
-                  delay: index * 0.1,
-                  ease: [0.4, 0, 0.2, 1]
-                }}
-              >
-                <Icon className="nav-icon" size={18} />
-                <span className="nav-label">{page.label}</span>
-              </motion.button>
-            )
-          })}
-        </nav>
+        {/* BOTTOM ROW: Nav + Status + Theme */}
+        <div className="header-bottom-row">
+          {/* Nav */}
+          <nav className="header-nav">
+            {pages.map((page, index) => {
+              const Icon = page.icon
+              const isActive = currentPage === page.id
+              return (
+                <motion.button
+                  key={page.id}
+                  className={`nav-button ${isActive ? 'active' : ''}`}
+                  onClick={() => onNavigate(page.id)}
+                  whileHover={{ y: -1, scale: 1.02 }}
+                  whileTap={{ y: 0, scale: 0.98 }}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.2,
+                    delay: index * 0.1,
+                    ease: [0.4, 0, 0.2, 1]
+                  }}
+                >
+                  <Icon className="nav-icon" size={18} />
+                  <span className="nav-label">{page.label}</span>
+                </motion.button>
+              )
+            })}
+          </nav>
 
-        {/* RIGHT: Status + Theme */}
-        <div className="header-info">
-          <motion.div
-            className="status-indicator"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-          >
-            <span className="status-dot status-online" />
-            <span className="status-text">Live feed</span>
-          </motion.div>
+          {/* Status + Theme */}
+          <div className="header-info">
+            <motion.div
+              className="status-indicator"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              <span className="status-dot status-online" />
+              <span className="status-text">Live feed</span>
+            </motion.div>
 
-          <motion.button
-            className="theme-toggle"
-            onClick={toggleTheme}
-            aria-label={`Switch to ${
-              theme === 'light' ? 'dark' : 'light'
-            } mode`}
-            whileHover={{ scale: 1.08, rotate: 180 }}
-            whileTap={{ scale: 0.92 }}
-            initial={{ opacity: 0, rotate: -180 }}
-            animate={{ opacity: 1, rotate: 0 }}
-            transition={{ duration: 0.4, delay: 0.4 }}
-          >
-            {theme === 'light' ? <MdDarkMode /> : <MdLightMode />}
-          </motion.button>
+            <motion.button
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${
+                theme === 'light' ? 'dark' : 'light'
+              } mode`}
+              whileHover={{ scale: 1.08, rotate: 180 }}
+              whileTap={{ scale: 0.92 }}
+              initial={{ opacity: 0, rotate: -180 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+            >
+              {theme === 'light' ? <MdDarkMode /> : <MdLightMode />}
+            </motion.button>
+          </div>
         </div>
       </motion.div>
     </motion.header>
