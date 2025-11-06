@@ -2332,6 +2332,166 @@ a:hover {
   }
 }
 
+/* ==================== PARALLAX BACKGROUND SYSTEM ==================== */
+.parallax-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+}
+
+/* Base parallax layer */
+.parallax-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform, opacity;
+}
+
+/* Layer 1: Deep background - gradient orbs */
+.parallax-layer-back {
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+}
+
+.gradient-orb {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.gradient-orb-1 {
+  top: -20%;
+  left: -20%;
+}
+
+.gradient-orb-2 {
+  bottom: -20%;
+  right: -20%;
+}
+
+.gradient-orb-3 {
+  top: 30%;
+  left: 30%;
+}
+
+.vignette-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Layer 2: Mid layer - scenery */
+.parallax-layer-mid {
+  bottom: 0;
+  height: 60%;
+}
+
+.horizon-layer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+.acacia-trees {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.vegetation-layer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* Layer 3: Foreground - gradient fades */
+.parallax-layer-front {
+  pointer-events: none;
+}
+
+.gradient-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  pointer-events: none;
+}
+
+.gradient-fade-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 20%;
+  pointer-events: none;
+}
+
+/* Layer 4: Highlight - light streaks */
+.parallax-layer-highlight {
+  pointer-events: none;
+}
+
+.light-streak {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.light-streak-1 {
+  top: 10%;
+  left: -10%;
+  width: 60%;
+  height: 40%;
+}
+
+.light-streak-2 {
+  bottom: 20%;
+  right: -10%;
+  width: 50%;
+  height: 35%;
+}
+
+/* Performance optimizations */
+.parallax-layer,
+.gradient-orb,
+.horizon-layer,
+.vegetation-layer,
+.light-streak {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth rendering */
+@media (min-width: 768px) {
+  .parallax-layer {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 /* ==================== ACCESSIBILITY ==================== */
 @media (prefers-reduced-motion: reduce) {
   *,

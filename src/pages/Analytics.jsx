@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { getMockAnalytics, getMockDetections } from '../api/mockData'
 import { motion } from 'framer-motion'
 import { MdShield, MdWarning, MdDirectionsCar, MdTimer } from 'react-icons/md'
+import { panelAnimations, durations, easings } from '../utils/motionConfig'
 
 export default function Analytics() {
   const [analytics, setAnalytics] = useState(null)
@@ -64,39 +65,16 @@ export default function Analytics() {
     item.count > max.count ? item : max
   )
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.1
-      }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 24, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.4,
-        ease: [0.4, 0, 0.2, 1]
-      }
-    }
-  }
-
+  // Use centralized motion config for consistency
+  const containerVariants = panelAnimations.staggerContainer
+  const itemVariants = panelAnimations.staggerItem
   const metricCardVariants = {
-    hidden: { opacity: 0, scale: 0.9, y: 20 },
+    hidden: panelAnimations.fadeInUp.initial,
     visible: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
+      ...panelAnimations.fadeInUp.animate,
       transition: {
-        duration: 0.5,
-        ease: [0.4, 0, 0.2, 1]
+        duration: durations.slow,
+        ease: easings.smooth
       }
     }
   }

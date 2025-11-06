@@ -4,6 +4,7 @@ import { getMockDetections } from '../api/mockData'
 import { formatDateRange, formatDate } from '../utils/formatDate'
 import { MdSearch, MdClose } from 'react-icons/md'
 import { motion, AnimatePresence } from 'framer-motion'
+import { panelAnimations, durations, easings } from '../utils/motionConfig'
 
 export default function History() {
   const [detections, setDetections] = useState([])
@@ -133,9 +134,9 @@ export default function History() {
     <div className="page-history">
       <motion.div
         className="history-header"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        initial={panelAnimations.fadeInUp.initial}
+        animate={panelAnimations.fadeInUp.animate}
+        transition={panelAnimations.fadeInUp.transition}
       >
         <div className="header-title">
           <h2>Detection History</h2>
@@ -145,9 +146,9 @@ export default function History() {
 
       <motion.div
         className="history-controls"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
+        initial={panelAnimations.fadeInUp.initial}
+        animate={panelAnimations.fadeInUp.animate}
+        transition={{ ...panelAnimations.fadeInUp.transition, delay: 0.1 }}
       >
         <div className="search-bar">
           <div style={{ position: 'relative' }}>
@@ -277,27 +278,23 @@ export default function History() {
                 <motion.div
                   key={date}
                   className="timeline-group"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ delay: groupIndex * 0.1 }}
+                  initial={panelAnimations.fadeInUp.initial}
+                  animate={panelAnimations.fadeInUp.animate}
+                  exit={panelAnimations.fadeInUp.exit}
+                  transition={{ ...panelAnimations.fadeInUp.transition, delay: groupIndex * 0.08 }}
                 >
                   <motion.div
                     className="timeline-date"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: groupIndex * 0.1 + 0.1 }}
+                    initial={panelAnimations.slideInRight.initial}
+                    animate={panelAnimations.slideInRight.animate}
+                    transition={{ ...panelAnimations.slideInRight.transition, delay: groupIndex * 0.08 + 0.05 }}
                   >
                     <h3>{date}</h3>
                     <motion.span
                       className="count"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{
-                        delay: groupIndex * 0.1 + 0.2,
-                        type: 'spring',
-                        stiffness: 200
-                      }}
+                      initial={panelAnimations.scaleIn.initial}
+                      animate={panelAnimations.scaleIn.animate}
+                      transition={{ ...panelAnimations.scaleIn.transition, delay: groupIndex * 0.08 + 0.1 }}
                     >
                       {items.length} detections
                     </motion.span>
@@ -306,13 +303,7 @@ export default function History() {
                     className="timeline-items"
                     initial="hidden"
                     animate="visible"
-                    variants={{
-                      visible: {
-                        transition: {
-                          staggerChildren: 0.05
-                        }
-                      }
-                    }}
+                    variants={panelAnimations.staggerContainer}
                   >
                     {items.map((detection) => (
                       <DetectionCard
