@@ -1,6 +1,6 @@
 import { formatDate, getRelativeTime } from '../utils/formatDate'
 import { formatCoordinates } from '../utils/mapHelpers'
-import { MdLocationOn, MdMap, MdAccessTime, MdWarning } from 'react-icons/md'
+import { MdLocationOn, MdMap, MdAccessTime, MdWarning, MdCheckCircle } from 'react-icons/md'
 import { motion } from 'framer-motion'
 
 export default function DetectionCard({ detection, isSelected, onClick }) {
@@ -19,7 +19,7 @@ export default function DetectionCard({ detection, isSelected, onClick }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ y: -4 }}
       whileTap={{ scale: 0.98 }}
       layout
       transition={{
@@ -53,9 +53,11 @@ export default function DetectionCard({ detection, isSelected, onClick }) {
       )}
 
       <div className="detection-content">
+        {/* Header Section */}
         <div className="detection-header">
-          <div className="detection-id">
-            <strong>{detection.id}</strong>
+          <div className="detection-id-section">
+            <span className="detection-id-label">Detection ID</span>
+            <strong className="detection-id">{detection.id}</strong>
           </div>
           <motion.div
             className="confidence-badge"
@@ -63,10 +65,16 @@ export default function DetectionCard({ detection, isSelected, onClick }) {
             animate={{ scale: 1 }}
             transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
           >
+            {threatLevel === 'safe' ? (
+              <MdCheckCircle size={18} style={{ marginRight: '4px' }} />
+            ) : (
+              <MdWarning size={18} style={{ marginRight: '4px' }} />
+            )}
             {(detection.confidence * 100).toFixed(1)}%
           </motion.div>
         </div>
 
+        {/* Details Grid */}
         <motion.div
           className="detection-details"
           initial={{ opacity: 0 }}
@@ -74,38 +82,54 @@ export default function DetectionCard({ detection, isSelected, onClick }) {
           transition={{ delay: 0.4 }}
         >
           <div className="detail-row">
-            <MdLocationOn className="detail-icon" color="var(--color-primary)" />
-            <span className="detail-text">
-              {formatCoordinates(detection.gps_lat, detection.gps_lng)}
-            </span>
+            <MdLocationOn className="detail-icon" />
+            <div className="detail-content">
+              <span className="detail-label">Location</span>
+              <span className="detail-text">
+                {formatCoordinates(detection.gps_lat, detection.gps_lng)}
+              </span>
+            </div>
           </div>
 
           {detection.zone && (
             <div className="detail-row">
-              <MdMap className="detail-icon" color="var(--color-info)" />
-              <span className="detail-text">{detection.zone}</span>
+              <MdMap className="detail-icon" />
+              <div className="detail-content">
+                <span className="detail-label">Zone</span>
+                <span className="detail-text">{detection.zone}</span>
+              </div>
             </div>
           )}
 
           <div className="detail-row">
-            <MdAccessTime className="detail-icon" color="var(--color-text-secondary)" />
-            <span className="detail-text" title={formatDate(detection.timestamp)}>
-              {getRelativeTime(detection.timestamp)}
-            </span>
-          </div>
-
-          {detection.status && (
-            <div className="detail-row">
-              <span className={`status-badge status-${detection.status}`}>
-                {detection.status}
+            <MdAccessTime className="detail-icon" />
+            <div className="detail-content">
+              <span className="detail-label">Time</span>
+              <span className="detail-text" title={formatDate(detection.timestamp)}>
+                {getRelativeTime(detection.timestamp)}
               </span>
             </div>
-          )}
+          </div>
         </motion.div>
 
+        {/* Status Section */}
+        {detection.status && (
+          <motion.div
+            className="detection-status"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+          >
+            <span className={`status-badge status-${detection.status}`}>
+              {detection.status}
+            </span>
+          </motion.div>
+        )}
+
+        {/* Action Button */}
         {threatLevel === 'danger' && (
           <motion.button
-            className="btn btn-alert btn-small"
+            className="btn btn-alert btn-full"
             onClick={(e) => {
               e.stopPropagation()
               alert(`Alert sent for ${detection.id}`)
@@ -113,10 +137,10 @@ export default function DetectionCard({ detection, isSelected, onClick }) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <MdWarning size={16} />
+            <MdWarning size={20} />
             Alert Ranger
           </motion.button>
         )}

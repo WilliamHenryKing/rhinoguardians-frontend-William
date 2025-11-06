@@ -24,27 +24,6 @@ export default function Header({ currentPage, onNavigate }) {
           <p className="header-subtitle">Real-Time Wildlife Detection Dashboard</p>
         </motion.div>
 
-        <nav className="header-nav">
-          {pages.map((page, index) => {
-            const Icon = page.icon
-            return (
-              <motion.button
-                key={page.id}
-                className={`nav-button ${currentPage === page.id ? 'active' : ''}`}
-                onClick={() => onNavigate(page.id)}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Icon className="nav-icon" />
-                <span className="nav-label">{page.label}</span>
-              </motion.button>
-            )
-          })}
-        </nav>
-
         <div className="header-info">
           <motion.div
             className="status-indicator"
@@ -77,6 +56,28 @@ export default function Header({ currentPage, onNavigate }) {
             </motion.div>
           </motion.button>
         </div>
+
+        <nav className="header-nav">
+          {pages.map((page, index) => {
+            const Icon = page.icon
+            return (
+              <motion.button
+                key={page.id}
+                className={`nav-button ${currentPage === page.id ? 'active' : ''}`}
+                onClick={() => onNavigate(page.id)}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                aria-label={page.label}
+              >
+                <Icon className="nav-icon" size={20} />
+                <span className="nav-label">{page.label}</span>
+              </motion.button>
+            )
+          })}
+        </nav>
       </div>
     </header>
   )
