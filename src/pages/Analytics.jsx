@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getMockAnalytics, getMockDetections } from '../api/mockData'
+import { motion } from 'framer-motion'
 
 export default function Analytics() {
   const [analytics, setAnalytics] = useState(null)
@@ -62,58 +63,133 @@ export default function Analytics() {
     item.count > max.count ? item : max
   )
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  }
+
   return (
-    <div className="page-analytics">
-      <div className="analytics-header">
+    <motion.div
+      className="page-analytics"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.div className="analytics-header" variants={itemVariants}>
         <h2>Analytics Dashboard</h2>
         <p className="subtitle">Comprehensive threat analysis and metrics</p>
-      </div>
+      </motion.div>
 
       {/* Key Metrics */}
-      <div className="metrics-grid">
-        <div className="metric-card metric-primary">
+      <motion.div className="metrics-grid" variants={itemVariants}>
+        <motion.div
+          className="metric-card metric-primary"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
           <div className="metric-icon">🦏</div>
           <div className="metric-content">
-            <div className="metric-value">{analytics.rhinoCount}</div>
+            <motion.div
+              className="metric-value"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
+            >
+              {analytics.rhinoCount}
+            </motion.div>
             <div className="metric-label">Rhinos Detected</div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="metric-card metric-danger">
+        <motion.div
+          className="metric-card metric-danger"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
           <div className="metric-icon">⚠️</div>
           <div className="metric-content">
-            <div className="metric-value">{analytics.threatCount}</div>
+            <motion.div
+              className="metric-value"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
+            >
+              {analytics.threatCount}
+            </motion.div>
             <div className="metric-label">Threats Identified</div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="metric-card metric-warning">
+        <motion.div
+          className="metric-card metric-warning"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
           <div className="metric-icon">🚗</div>
           <div className="metric-content">
-            <div className="metric-value">{analytics.vehicleCount}</div>
+            <motion.div
+              className="metric-value"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
+            >
+              {analytics.vehicleCount}
+            </motion.div>
             <div className="metric-label">Vehicles Spotted</div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="metric-card metric-success">
+        <motion.div
+          className="metric-card metric-success"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
           <div className="metric-icon">⏱️</div>
           <div className="metric-content">
-            <div className="metric-value">{analytics.responseTime}m</div>
+            <motion.div
+              className="metric-value"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6, type: 'spring', stiffness: 200 }}
+            >
+              {analytics.responseTime}m
+            </motion.div>
             <div className="metric-label">Avg Response Time</div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Charts Section */}
-      <div className="analytics-charts">
+      <motion.div className="analytics-charts" variants={itemVariants}>
         {/* Detections by Class */}
-        <div className="chart-card">
+        <motion.div
+          className="chart-card"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.7 }}
+        >
           <h3>Detections by Class</h3>
           <div className="bar-chart">
-            {Object.entries(classStats).map(([className, count]) => {
+            {Object.entries(classStats).map(([className, count], index) => {
               const percentage = (count / detections.length) * 100
               return (
-                <div key={className} className="bar-item">
+                <motion.div
+                  key={className}
+                  className="bar-item"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8 + index * 0.1 }}
+                >
                   <div className="bar-label">
                     <span className={`class-tag class-${className}`}>
                       {className}
@@ -121,49 +197,75 @@ export default function Analytics() {
                     <span className="bar-value">{count}</span>
                   </div>
                   <div className="bar-container">
-                    <div
+                    <motion.div
                       className={`bar bar-${className}`}
-                      style={{ width: `${percentage}%` }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${percentage}%` }}
+                      transition={{ delay: 0.9 + index * 0.1, duration: 0.6 }}
                     />
                   </div>
-                </div>
+                </motion.div>
               )
             })}
           </div>
-        </div>
+        </motion.div>
 
         {/* Detections by Zone */}
-        <div className="chart-card">
+        <motion.div
+          className="chart-card"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.8 }}
+        >
           <h3>Detections by Zone</h3>
           <div className="bar-chart">
-            {Object.entries(zoneStats).map(([zone, count]) => {
+            {Object.entries(zoneStats).map(([zone, count], index) => {
               const percentage = (count / detections.length) * 100
               return (
-                <div key={zone} className="bar-item">
+                <motion.div
+                  key={zone}
+                  className="bar-item"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.9 + index * 0.1 }}
+                >
                   <div className="bar-label">
                     <span>{zone}</span>
                     <span className="bar-value">{count}</span>
                   </div>
                   <div className="bar-container">
-                    <div
+                    <motion.div
                       className="bar bar-zone"
-                      style={{ width: `${percentage}%` }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${percentage}%` }}
+                      transition={{ delay: 1.0 + index * 0.1, duration: 0.6 }}
                     />
                   </div>
-                </div>
+                </motion.div>
               )
             })}
           </div>
-        </div>
+        </motion.div>
 
         {/* Status Distribution */}
-        <div className="chart-card">
+        <motion.div
+          className="chart-card"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.9 }}
+        >
           <h3>Detection Status</h3>
           <div className="bar-chart">
-            {Object.entries(statusStats).map(([status, count]) => {
+            {Object.entries(statusStats).map(([status, count], index) => {
               const percentage = (count / detections.length) * 100
               return (
-                <div key={status} className="bar-item">
+                <motion.div
+                  key={status}
+                  className="bar-item"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 1.0 + index * 0.1 }}
+                >
                   <div className="bar-label">
                     <span className={`status-badge status-${status}`}>
                       {status}
@@ -171,25 +273,32 @@ export default function Analytics() {
                     <span className="bar-value">{count}</span>
                   </div>
                   <div className="bar-container">
-                    <div
+                    <motion.div
                       className={`bar bar-status-${status}`}
-                      style={{ width: `${percentage}%` }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${percentage}%` }}
+                      transition={{ delay: 1.1 + index * 0.1, duration: 0.6 }}
                     />
                   </div>
-                </div>
+                </motion.div>
               )
             })}
           </div>
-        </div>
+        </motion.div>
 
         {/* Hourly Activity */}
-        <div className="chart-card chart-wide">
+        <motion.div
+          className="chart-card chart-wide"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1.0 }}
+        >
           <h3>Detections by Hour</h3>
           <p className="chart-subtitle">
             Peak activity: {peakHour.hour}:00 with {peakHour.count} detections
           </p>
           <div className="line-chart">
-            {analytics.detectionsByHour.map((item) => {
+            {analytics.detectionsByHour.map((item, index) => {
               const maxCount = Math.max(
                 ...analytics.detectionsByHour.map((i) => i.count)
               )
@@ -197,9 +306,16 @@ export default function Analytics() {
 
               return (
                 <div key={item.hour} className="line-bar">
-                  <div
+                  <motion.div
                     className="line-bar-fill"
-                    style={{ height: `${height}%` }}
+                    initial={{ height: 0 }}
+                    animate={{ height: `${height}%` }}
+                    transition={{
+                      delay: 1.2 + index * 0.02,
+                      duration: 0.5,
+                      type: 'spring',
+                      stiffness: 100
+                    }}
                     title={`${item.hour}:00 - ${item.count} detections`}
                   />
                   <div className="line-bar-label">
@@ -209,45 +325,76 @@ export default function Analytics() {
               )
             })}
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Performance Metrics */}
-      <div className="analytics-footer">
-        <div className="performance-card">
+      <motion.div className="analytics-footer" variants={itemVariants}>
+        <motion.div
+          className="performance-card"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.3 }}
+        >
           <h3>Ranger Efficiency</h3>
           <div className="performance-meter">
             <div className="meter-bar">
-              <div
+              <motion.div
                 className="meter-fill"
-                style={{ width: `${analytics.rangerEfficiency}%` }}
+                initial={{ width: 0 }}
+                animate={{ width: `${analytics.rangerEfficiency}%` }}
+                transition={{ delay: 1.4, duration: 1, ease: 'easeOut' }}
               />
             </div>
-            <div className="meter-value">{analytics.rangerEfficiency}%</div>
+            <motion.div
+              className="meter-value"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.6, type: 'spring', stiffness: 200 }}
+            >
+              {analytics.rangerEfficiency}%
+            </motion.div>
           </div>
           <p className="performance-note">
             Based on response time and threat neutralization rate
           </p>
-        </div>
+        </motion.div>
 
-        <div className="summary-card">
+        <motion.div
+          className="summary-card"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.4 }}
+        >
           <h3>Summary</h3>
-          <ul className="summary-list">
-            <li>
+          <motion.ul
+            className="summary-list"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1,
+                  delayChildren: 1.5
+                }
+              }
+            }}
+          >
+            <motion.li variants={itemVariants}>
               <strong>{analytics.totalDetections}</strong> total detections processed
-            </li>
-            <li>
+            </motion.li>
+            <motion.li variants={itemVariants}>
               <strong>{analytics.threatCount}</strong> threats identified and reported
-            </li>
-            <li>
+            </motion.li>
+            <motion.li variants={itemVariants}>
               <strong>{analytics.responseTime} minutes</strong> average response time
-            </li>
-            <li>
+            </motion.li>
+            <motion.li variants={itemVariants}>
               <strong>Zone A</strong> has the highest activity
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+            </motion.li>
+          </motion.ul>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   )
 }

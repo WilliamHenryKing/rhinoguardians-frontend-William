@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { MdClose, MdError, MdWarning, MdCheckCircle, MdInfo } from 'react-icons/md'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function AlertNotification({ alert, onClose, autoClose = 5000 }) {
   const [isExiting, setIsExiting] = useState(false)
@@ -36,15 +38,15 @@ export default function AlertNotification({ alert, onClose, autoClose = 5000 }) 
   const getIcon = (type) => {
     switch (type) {
       case 'critical':
-        return '🚨'
+        return <MdError size={28} />
       case 'warning':
-        return '⚠️'
+        return <MdWarning size={28} />
       case 'success':
-        return '✅'
+        return <MdCheckCircle size={28} />
       case 'info':
-        return 'ℹ️'
+        return <MdInfo size={28} />
       default:
-        return '📢'
+        return <MdInfo size={28} />
     }
   }
 
@@ -64,27 +66,66 @@ export default function AlertNotification({ alert, onClose, autoClose = 5000 }) 
   }
 
   return (
-    <div className={`alert-toast ${getSeverityClass(alert.type)} ${isExiting ? 'exiting' : ''}`}>
+    <motion.div
+      className={`alert-toast ${getSeverityClass(alert.type)}`}
+      initial={{ opacity: 0, x: 400, scale: 0.8 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 400, scale: 0.8 }}
+      transition={{
+        duration: 0.3,
+        type: 'spring',
+        stiffness: 200,
+        damping: 20
+      }}
+    >
       <div className="alert-content">
-        <span className="alert-icon">{getIcon(alert.type)}</span>
+        <motion.span
+          className="alert-icon"
+          initial={{ rotate: -180, scale: 0 }}
+          animate={{ rotate: 0, scale: 1 }}
+          transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+        >
+          {getIcon(alert.type)}
+        </motion.span>
         <div className="alert-body">
-          <div className="alert-message">{alert.message}</div>
+          <motion.div
+            className="alert-message"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+          >
+            {alert.message}
+          </motion.div>
           {alert.detection_id && (
-            <div className="alert-subtext">Detection ID: {alert.detection_id}</div>
+            <motion.div
+              className="alert-subtext"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              Detection ID: {alert.detection_id}
+            </motion.div>
           )}
         </div>
-        <button className="alert-close" onClick={handleClose} aria-label="Close alert">
-          ✕
-        </button>
+        <motion.button
+          className="alert-close"
+          onClick={handleClose}
+          aria-label="Close alert"
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <MdClose size={20} />
+        </motion.button>
       </div>
       {autoClose > 0 && (
         <div className="alert-progress">
-          <div
+          <motion.div
             className="alert-progress-bar"
-            style={{ width: `${progress}%` }}
+            initial={{ width: '100%' }}
+            animate={{ width: `${progress}%` }}
           />
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

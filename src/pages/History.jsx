@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import DetectionCard from '../components/DetectionCard'
 import { getMockDetections } from '../api/mockData'
 import { formatDateRange, formatDate } from '../utils/formatDate'
+import { MdSearch, MdClose } from 'react-icons/md'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function History() {
   const [detections, setDetections] = useState([])
@@ -129,22 +131,60 @@ export default function History() {
 
   return (
     <div className="page-history">
-      <div className="history-header">
+      <motion.div
+        className="history-header"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="header-title">
           <h2>Detection History</h2>
           <p className="subtitle">Browse and search past detections</p>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="history-controls">
+      <motion.div
+        className="history-controls"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
         <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search detections..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
+          <div style={{ position: 'relative' }}>
+            <MdSearch
+              size={24}
+              style={{
+                position: 'absolute',
+                left: '16px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--color-text-secondary)',
+                pointerEvents: 'none'
+              }}
+            />
+            <input
+              type="text"
+              placeholder="Search detections..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+              style={{ paddingLeft: '50px' }}
+            />
+            {searchTerm && (
+              <MdClose
+                size={24}
+                style={{
+                  position: 'absolute',
+                  right: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'var(--color-text-secondary)',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setSearchTerm('')}
+              />
+            )}
+          </div>
         </div>
 
         <div className="filter-row">
@@ -191,49 +231,104 @@ export default function History() {
             <option value="confidence">Highest Confidence</option>
           </select>
 
-          <button onClick={resetFilters} className="btn btn-secondary">
+          <motion.button
+            onClick={resetFilters}
+            className="btn btn-secondary"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             Reset
-          </button>
+          </motion.button>
         </div>
 
-        <div className="results-summary">
+        <motion.div
+          className="results-summary"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
           Showing {filteredDetections.length} of {detections.length} detections
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      <div className="history-content">
+      <motion.div
+        className="history-content"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
         {loading ? (
           <div className="loading-state">Loading history...</div>
         ) : filteredDetections.length === 0 ? (
-          <div className="no-results">
+          <motion.div
+            className="no-results"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
             <p>No detections found</p>
             <button onClick={resetFilters} className="btn btn-secondary btn-small">
               Clear Filters
             </button>
-          </div>
+          </motion.div>
         ) : (
           <div className="history-timeline">
-            {Object.entries(groupedDetections).map(([date, items]) => (
-              <div key={date} className="timeline-group">
-                <div className="timeline-date">
-                  <h3>{date}</h3>
-                  <span className="count">{items.length} detections</span>
-                </div>
-                <div className="timeline-items">
-                  {items.map((detection) => (
-                    <DetectionCard
-                      key={detection.id}
-                      detection={detection}
-                      isSelected={selectedDetection?.id === detection.id}
-                      onClick={() => setSelectedDetection(detection)}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
+            <AnimatePresence>
+              {Object.entries(groupedDetections).map(([date, items], groupIndex) => (
+                <motion.div
+                  key={date}
+                  className="timeline-group"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ delay: groupIndex * 0.1 }}
+                >
+                  <motion.div
+                    className="timeline-date"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: groupIndex * 0.1 + 0.1 }}
+                  >
+                    <h3>{date}</h3>
+                    <motion.span
+                      className="count"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{
+                        delay: groupIndex * 0.1 + 0.2,
+                        type: 'spring',
+                        stiffness: 200
+                      }}
+                    >
+                      {items.length} detections
+                    </motion.span>
+                  </motion.div>
+                  <motion.div
+                    className="timeline-items"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                      visible: {
+                        transition: {
+                          staggerChildren: 0.05
+                        }
+                      }
+                    }}
+                  >
+                    {items.map((detection) => (
+                      <DetectionCard
+                        key={detection.id}
+                        detection={detection}
+                        isSelected={selectedDetection?.id === detection.id}
+                        onClick={() => setSelectedDetection(detection)}
+                      />
+                    ))}
+                  </motion.div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   )
 }

@@ -3,6 +3,7 @@ import Map from '../components/Map'
 import DetectionCard from '../components/DetectionCard'
 import Sidebar from '../components/Sidebar'
 import { getMockDetections, getMockAlerts } from '../api/mockData'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function Dashboard({ onAlert }) {
   const [detections, setDetections] = useState([])
@@ -109,30 +110,48 @@ export default function Dashboard({ onAlert }) {
             {loading && <span className="loading-spinner">⟳</span>}
           </div>
 
-          <div className="detections-list">
-            {filteredDetections.length === 0 ? (
-              <div className="no-results">
-                <p>No detections found</p>
-                {Object.values(filters).some((f) => f) && (
-                  <button
-                    className="btn btn-secondary btn-small"
-                    onClick={() => setFilters({})}
-                  >
-                    Clear Filters
-                  </button>
-                )}
-              </div>
-            ) : (
-              filteredDetections.map((detection) => (
-                <DetectionCard
-                  key={detection.id}
-                  detection={detection}
-                  isSelected={selectedDetection?.id === detection.id}
-                  onClick={() => setSelectedDetection(detection)}
-                />
-              ))
-            )}
-          </div>
+          <motion.div
+            className="detections-list"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.05
+                }
+              }
+            }}
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredDetections.length === 0 ? (
+                <motion.div
+                  className="no-results"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                >
+                  <p>No detections found</p>
+                  {Object.values(filters).some((f) => f) && (
+                    <button
+                      className="btn btn-secondary btn-small"
+                      onClick={() => setFilters({})}
+                    >
+                      Clear Filters
+                    </button>
+                  )}
+                </motion.div>
+              ) : (
+                filteredDetections.map((detection, index) => (
+                  <DetectionCard
+                    key={detection.id}
+                    detection={detection}
+                    isSelected={selectedDetection?.id === detection.id}
+                    onClick={() => setSelectedDetection(detection)}
+                  />
+                ))
+              )}
+            </AnimatePresence>
+          </motion.div>
         </div>
       </div>
     </div>

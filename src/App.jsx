@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import './App.css'
+import { ThemeProvider } from './context/ThemeContext'
 import Header from './components/Header'
 import AlertNotification from './components/AlertNotification'
 import Dashboard from './pages/Dashboard'
 import History from './pages/History'
 import Analytics from './pages/Analytics'
+import { AnimatePresence, motion } from 'framer-motion'
 
 /**
  * Main Application Component
@@ -56,26 +58,48 @@ export default function App() {
     }
   }
 
+  // Page transition variants
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 }
+  }
+
   return (
-    <div className="app">
-      <Header currentPage={currentPage} onNavigate={handleNavigate} />
+    <ThemeProvider>
+      <div className="app">
+        <Header currentPage={currentPage} onNavigate={handleNavigate} />
 
-      <main className="app-main">
-        {renderPage()}
-      </main>
+        <main className="app-main">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentPage}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+            >
+              {renderPage()}
+            </motion.div>
+          </AnimatePresence>
+        </main>
 
-      {/* Alert Notifications Container */}
-      <div className="alerts-container">
-        {alerts.map((alert) => (
-          <AlertNotification
-            key={alert.id}
-            alert={alert}
-            onClose={removeAlert}
-            autoClose={5000}
-          />
-        ))}
+        {/* Alert Notifications Container */}
+        <AnimatePresence>
+          <div className="alerts-container">
+            {alerts.map((alert) => (
+              <AlertNotification
+                key={alert.id}
+                alert={alert}
+                onClose={removeAlert}
+                autoClose={5000}
+              />
+            ))}
+          </div>
+        </AnimatePresence>
       </div>
-    </div>
+    </ThemeProvider>
   )
 }
 
