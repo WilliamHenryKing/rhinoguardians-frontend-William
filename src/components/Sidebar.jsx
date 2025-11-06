@@ -28,20 +28,30 @@ export default function Sidebar({ onFilterChange, onRefresh, detectionCount }) {
   }
 
   const containerVariants = {
-    hidden: { opacity: 0, x: -20 },
+    hidden: { opacity: 0, x: -24 },
     visible: {
       opacity: 1,
       x: 0,
       transition: {
-        duration: 0.5,
-        staggerChildren: 0.1
+        duration: 0.4,
+        ease: [0.4, 0, 0.2, 1],
+        staggerChildren: 0.08,
+        delayChildren: 0.1
       }
     }
   }
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 }
+    hidden: { opacity: 0, y: 16, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    }
   }
 
   return (

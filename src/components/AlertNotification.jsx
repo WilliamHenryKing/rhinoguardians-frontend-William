@@ -68,14 +68,12 @@ export default function AlertNotification({ alert, onClose, autoClose = 5000 }) 
   return (
     <motion.div
       className={`alert-toast ${getSeverityClass(alert.type)}`}
-      initial={{ opacity: 0, x: 400, scale: 0.8 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 400, scale: 0.8 }}
+      initial={{ opacity: 0, x: 400, scale: 0.9, y: -20 }}
+      animate={{ opacity: 1, x: 0, scale: 1, y: 0 }}
+      exit={{ opacity: 0, x: 400, scale: 0.9, y: -20 }}
       transition={{
-        duration: 0.3,
-        type: 'spring',
-        stiffness: 200,
-        damping: 20
+        duration: 0.4,
+        ease: [0.4, 0, 0.2, 1]
       }}
     >
       <div className="alert-content">

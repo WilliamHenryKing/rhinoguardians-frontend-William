@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getMockAnalytics, getMockDetections } from '../api/mockData'
 import { motion } from 'framer-motion'
+import { MdShield, MdWarning, MdDirectionsCar, MdTimer } from 'react-icons/md'
 
 export default function Analytics() {
   const [analytics, setAnalytics] = useState(null)
@@ -68,14 +69,36 @@ export default function Analytics() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.08,
+        delayChildren: 0.1
       }
     }
   }
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+    hidden: { opacity: 0, y: 24, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.4,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    }
+  }
+
+  const metricCardVariants = {
+    hidden: { opacity: 0, scale: 0.9, y: 20 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    }
   }
 
   return (
@@ -91,19 +114,32 @@ export default function Analytics() {
       </motion.div>
 
       {/* Key Metrics */}
-      <motion.div className="metrics-grid" variants={itemVariants}>
+      <motion.div
+        className="metrics-grid"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         <motion.div
           className="metric-card metric-primary"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: 'spring', stiffness: 300 }}
+          variants={metricCardVariants}
+          whileHover={{ y: -4, scale: 1.02 }}
+          transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
         >
-          <div className="metric-icon">🦏</div>
+          <motion.div
+            className="metric-icon"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
+          >
+            <MdShield />
+          </motion.div>
           <div className="metric-content">
             <motion.div
               className="metric-value"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
+              transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
             >
               {analytics.rhinoCount}
             </motion.div>
@@ -113,16 +149,24 @@ export default function Analytics() {
 
         <motion.div
           className="metric-card metric-danger"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: 'spring', stiffness: 300 }}
+          variants={metricCardVariants}
+          whileHover={{ y: -4, scale: 1.02 }}
+          transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
         >
-          <div className="metric-icon">⚠️</div>
+          <motion.div
+            className="metric-icon"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
+          >
+            <MdWarning />
+          </motion.div>
           <div className="metric-content">
             <motion.div
               className="metric-value"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
+              transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
             >
               {analytics.threatCount}
             </motion.div>
@@ -132,16 +176,24 @@ export default function Analytics() {
 
         <motion.div
           className="metric-card metric-warning"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: 'spring', stiffness: 300 }}
+          variants={metricCardVariants}
+          whileHover={{ y: -4, scale: 1.02 }}
+          transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
         >
-          <div className="metric-icon">🚗</div>
+          <motion.div
+            className="metric-icon"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
+          >
+            <MdDirectionsCar />
+          </motion.div>
           <div className="metric-content">
             <motion.div
               className="metric-value"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
+              transition={{ delay: 0.6, type: 'spring', stiffness: 200 }}
             >
               {analytics.vehicleCount}
             </motion.div>
@@ -151,16 +203,24 @@ export default function Analytics() {
 
         <motion.div
           className="metric-card metric-success"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: 'spring', stiffness: 300 }}
+          variants={metricCardVariants}
+          whileHover={{ y: -4, scale: 1.02 }}
+          transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
         >
-          <div className="metric-icon">⏱️</div>
+          <motion.div
+            className="metric-icon"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.6, type: 'spring', stiffness: 200 }}
+          >
+            <MdTimer />
+          </motion.div>
           <div className="metric-content">
             <motion.div
               className="metric-value"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6, type: 'spring', stiffness: 200 }}
+              transition={{ delay: 0.7, type: 'spring', stiffness: 200 }}
             >
               {analytics.responseTime}m
             </motion.div>
