@@ -637,41 +637,41 @@ a:hover {
 
 .dashboard-layout {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-  padding: 0;
-  height: 100%;
+  grid-template-columns: 320px 1fr 480px;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  height: calc(100vh - 88px);
   overflow: hidden;
+  max-width: 1800px;
+  margin: 0 auto;
   width: 100%;
 }
 
 .dashboard-main {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  height: 100%;
+  gap: var(--space-4);
 }
 
 .map-section {
   flex: 1;
   background: var(--color-bg-secondary);
-  border-radius: 0;
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: none;
-  border: none;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--color-border);
   position: relative;
   transition: all var(--transition-base);
-  height: 100%;
 }
 
 .map-section:hover {
-  box-shadow: none;
+  box-shadow: var(--shadow-2xl);
 }
 
 .map-section .leaflet-container {
   height: 100%;
   width: 100%;
-  border-radius: 0;
+  border-radius: var(--radius-xl);
 }
 
 .dashboard-detections {
@@ -1810,15 +1810,15 @@ a:hover {
 /* ==================== RESPONSIVE DESIGN ==================== */
 @media (max-width: 1400px) {
   .dashboard-layout {
-    grid-template-columns: 1fr;
-    gap: 0;
+    grid-template-columns: 300px 1fr 460px;
+    gap: var(--space-5);
   }
 }
 
 @media (max-width: 1200px) {
   .dashboard-layout {
-    grid-template-columns: 1fr;
-    gap: 0;
+    grid-template-columns: 280px 1fr 440px;
+    gap: var(--space-4);
   }
 
   .header-brand h1 {
@@ -1842,14 +1842,13 @@ a:hover {
 @media (max-width: 992px) {
   .dashboard-layout {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    height: 100%;
-    gap: 0;
+    grid-template-rows: auto 1fr auto;
+    height: auto;
+    gap: var(--space-5);
   }
 
   .map-section {
-    height: 100%;
-    min-height: unset;
+    min-height: 500px;
   }
 
   .dashboard-detections {

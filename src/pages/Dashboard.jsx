@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import Map from '../components/Map'
-import { getMockDetections } from '../api/mockData'
+import DetectionCard from '../components/DetectionCard'
+import Sidebar from '../components/Sidebar'
+import { getMockDetections, getMockAlerts } from '../api/mockData'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function Dashboard({ onAlert }) {
   const [detections, setDetections] = useState([])
@@ -86,6 +89,12 @@ export default function Dashboard({ onAlert }) {
   return (
     <div className="page-dashboard">
       <div className="dashboard-layout">
+        <Sidebar
+          onFilterChange={handleFilterChange}
+          onRefresh={loadDetections}
+          detectionCount={filteredDetections.length}
+        />
+
         <div className="dashboard-main">
           <div className="map-section">
             <Map
