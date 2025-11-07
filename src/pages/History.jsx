@@ -188,7 +188,7 @@ export default function History() {
           </div>
         </div>
 
-        <div className="filter-row">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5 mb-5 sm:mb-6">
           <select
             value={filters.class_name}
             onChange={(e) => handleFilterChange('class_name', e.target.value)}
@@ -234,7 +234,7 @@ export default function History() {
 
           <motion.button
             onClick={resetFilters}
-            className="btn btn-secondary"
+            className="btn btn-secondary sm:col-span-2 lg:col-span-1"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -243,7 +243,7 @@ export default function History() {
         </div>
 
         <motion.div
-          className="results-summary"
+          className="text-neutral-600 dark:text-neutral-400 text-sm sm:text-base lg:text-lg font-medium"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
