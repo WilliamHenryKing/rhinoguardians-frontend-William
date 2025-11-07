@@ -71,7 +71,7 @@ body {
 
 /* ==================== APP LAYOUT ==================== */
 .app {
-  @apply flex flex-col min-h-screen max-h-screen overflow-hidden;
+  @apply flex flex-col min-h-screen max-h-screen overflow-x-hidden;
 }
 
 .app-main {
@@ -952,6 +952,15 @@ a {
   @apply absolute w-px h-px p-0 -m-px overflow-hidden;
   clip: rect(0, 0, 0, 0);
   @apply whitespace-nowrap border-0;
+}
+
+/* Custom shadow utilities from design tokens */
+.shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+.shadow-elevated {
+  box-shadow: var(--shadow-elevated);
 }
 
 /* No scrollbar utility */
