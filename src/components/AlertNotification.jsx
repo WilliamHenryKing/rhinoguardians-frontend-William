@@ -1,129 +1,83 @@
-import { useState, useEffect } from 'react'
-import { MdClose, MdError, MdWarning, MdCheckCircle, MdInfo } from 'react-icons/md'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { FiX, FiAlertTriangle, FiInfo, FiCheckCircle, FiAlertCircle } from 'react-icons/fi'
 
-export default function AlertNotification({ alert, onClose, autoClose = 5000 }) {
-  const [isExiting, setIsExiting] = useState(false)
-  const [progress, setProgress] = useState(100)
-
+export default function AlertNotification({ alert, onClose }) {
   useEffect(() => {
-    if (autoClose > 0) {
-      // Progress bar animation
-      const progressInterval = setInterval(() => {
-        setProgress((prev) => {
-          const decrement = 100 / (autoClose / 100)
-          return Math.max(0, prev - decrement)
-        })
-      }, 100)
+    const timer = setTimeout(() => {
+      onClose()
+    }, 5000)
 
-      // Auto-close timer
-      const closeTimer = setTimeout(() => {
-        handleClose()
-      }, autoClose)
+    return () => clearTimeout(timer)
+  }, [onClose])
 
-      return () => {
-        clearInterval(progressInterval)
-        clearTimeout(closeTimer)
-      }
-    }
-  }, [autoClose])
-
-  const handleClose = () => {
-    setIsExiting(true)
-    setTimeout(() => {
-      onClose && onClose(alert.id)
-    }, 300) // Match animation duration
-  }
-
-  const getIcon = (type) => {
-    switch (type) {
-      case 'critical':
-        return <MdError size={28} />
-      case 'warning':
-        return <MdWarning size={28} />
-      case 'success':
-        return <MdCheckCircle size={28} />
-      case 'info':
-        return <MdInfo size={28} />
-      default:
-        return <MdInfo size={28} />
-    }
-  }
-
-  const getSeverityClass = (type) => {
-    switch (type) {
-      case 'critical':
-        return 'alert-critical'
-      case 'warning':
-        return 'alert-warning'
-      case 'success':
-        return 'alert-success'
-      case 'info':
-        return 'alert-info'
-      default:
-        return 'alert-default'
+  const types = {
+    info: {
+      icon: FiInfo,
+      bg: 'bg-blue-500/10',
+      border: 'border-blue-500/30',
+      text: 'text-blue-300',
+      iconBg: 'bg-blue-500/20'
+    },
+    success: {
+      icon: FiCheckCircle,
+      bg: 'bg-emerald-500/10',
+      border: 'border-emerald-500/30',
+      text: 'text-emerald-300',
+      iconBg: 'bg-emerald-500/20'
+    },
+    warning: {
+      icon: FiAlertTriangle,
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/30',
+      text: 'text-amber-300',
+      iconBg: 'bg-amber-500/20'
+    },
+    error: {
+      icon: FiAlertCircle,
+      bg: 'bg-red-500/10',
+      border: 'border-red-500/30',
+      text: 'text-red-300',
+      iconBg: 'bg-red-500/20'
+    },
+    threat: {
+      icon: FiAlertTriangle,
+      bg: 'bg-red-500/10',
+      border: 'border-red-500/30',
+      text: 'text-red-300',
+      iconBg: 'bg-red-500/20'
     }
   }
+
+  const config = types[alert.type] || types.info
+  const Icon = config.icon
 
   return (
     <motion.div
-      className={`alert-toast ${getSeverityClass(alert.type)}`}
-      initial={{ opacity: 0, x: 400, scale: 0.9, y: -20 }}
-      animate={{ opacity: 1, x: 0, scale: 1, y: 0 }}
-      exit={{ opacity: 0, x: 400, scale: 0.9, y: -20 }}
-      transition={{
-        duration: 0.4,
-        ease: [0.4, 0, 0.2, 1]
-      }}
+      initial={{ opacity: 0, x: 100, scale: 0.9 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 100, scale: 0.9 }}
+      className={'flex items-start gap-3 p-4 rounded-xl backdrop-blur-lg border ' + config.bg + ' ' + config.border}
     >
-      <div className="alert-content">
-        <motion.span
-          className="alert-icon"
-          initial={{ rotate: -180, scale: 0 }}
-          animate={{ rotate: 0, scale: 1 }}
-          transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
-        >
-          {getIcon(alert.type)}
-        </motion.span>
-        <div className="alert-body">
-          <motion.div
-            className="alert-message"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-          >
-            {alert.message}
-          </motion.div>
-          {alert.detection_id && (
-            <motion.div
-              className="alert-subtext"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              Detection ID: {alert.detection_id}
-            </motion.div>
-          )}
-        </div>
-        <motion.button
-          className="alert-close"
-          onClick={handleClose}
-          aria-label="Close alert"
-          whileHover={{ scale: 1.1, rotate: 90 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <MdClose size={20} />
-        </motion.button>
+      <div className={'p-2 rounded-lg ' + config.iconBg}>
+        <Icon className={'w-5 h-5 ' + config.text} />
       </div>
-      {autoClose > 0 && (
-        <div className="alert-progress">
-          <motion.div
-            className="alert-progress-bar"
-            initial={{ width: '100%' }}
-            animate={{ width: `${progress}%` }}
-          />
-        </div>
-      )}
+
+      <div className="flex-1 min-w-0">
+        <h4 className={'font-semibold text-sm mb-1 ' + config.text}>
+          {alert.title || 'Notification'}
+        </h4>
+        <p className="text-sm text-slate-300">
+          {alert.message}
+        </p>
+      </div>
+
+      <button
+        onClick={onClose}
+        className="p-1 rounded-lg hover:bg-white/10 transition-colors"
+      >
+        <FiX className="w-4 h-4 text-slate-400 hover:text-white" />
+      </button>
     </motion.div>
   )
 }

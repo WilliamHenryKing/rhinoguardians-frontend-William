@@ -1,176 +1,161 @@
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { FiMapPin, FiActivity, FiAlertTriangle, FiShield } from 'react-icons/fi'
 import Map from '../components/Map'
 import DetectionCard from '../components/DetectionCard'
 import Sidebar from '../components/Sidebar'
-import { getMockDetections, getMockAlerts } from '../api/mockData'
-import { motion, AnimatePresence } from 'framer-motion'
-import { panelAnimations } from '../utils/motionConfig'
+import { getMockDetections } from '../api/mockData'
 
 export default function Dashboard({ onAlert }) {
   const [detections, setDetections] = useState([])
-  const [filteredDetections, setFilteredDetections] = useState([])
   const [selectedDetection, setSelectedDetection] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [filters, setFilters] = useState({})
+  const [filters, setFilters] = useState({
+    class: 'All',
+    dateRange: '24h',
+    minConfidence: 0
+  })
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadDetections()
-    // Simulate real-time updates every 30 seconds
-    const interval = setInterval(() => {
-      loadDetections()
-    }, 30000)
-
-    return () => clearInterval(interval)
   }, [])
-
-  useEffect(() => {
-    applyFilters()
-  }, [detections, filters])
 
   const loadDetections = async () => {
     setLoading(true)
     try {
-      const data = await getMockDetections({ limit: 50 })
+      const data = await getMockDetections()
       setDetections(data)
-
-      // Check for new threats and create alerts
-      const threats = data.filter(
-        (d) => (d.class_name === 'human' || d.class_name === 'vehicle') && d.status === 'threat'
+      
+      // Check for threats and send alert
+      const threats = data.filter(d => 
+        d.class_name?.toLowerCase().includes('human') || 
+        d.class_name?.toLowerCase().includes('poacher')
       )
-
-      if (threats.length > 0 && onAlert) {
-        // Create an alert for the most recent threat
-        const recentThreat = threats[0]
+      
+      if (threats.length > 0) {
         onAlert({
-          id: Date.now(),
-          type: 'critical',
-          message: `${recentThreat.class_name.toUpperCase()} detected in ${recentThreat.zone}!`,
-          detection_id: recentThreat.id,
-          timestamp: new Date().toISOString()
+          type: 'threat',
+          title: 'Threat Detected',
+          message: threats.length + ' potential threat(s) detected in the area!'
         })
       }
     } catch (error) {
-      console.error('Error loading detections:', error)
+      console.error('Failed to load detections:', error)
+      onAlert({
+        type: 'error',
+        title: 'Error',
+        message: 'Failed to load detection data'
+      })
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
-  const applyFilters = () => {
-    let filtered = [...detections]
-
-    // Filter by class
-    if (filters.class_name) {
-      filtered = filtered.filter((d) => d.class_name === filters.class_name)
+  const filteredDetections = detections.filter(d => {
+    if (filters.class !== 'All' && !d.class_name?.toLowerCase().includes(filters.class.toLowerCase())) {
+      return false
     }
-
-    // Filter by zone
-    if (filters.zone) {
-      filtered = filtered.filter((d) => d.zone === filters.zone)
+    if (d.confidence * 100 < filters.minConfidence) {
+      return false
     }
+    return true
+  })
 
-    // Filter by status
-    if (filters.status) {
-      filtered = filtered.filter((d) => d.status === filters.status)
-    }
-
-    // Search by ID
-    if (filters.searchId) {
-      filtered = filtered.filter((d) =>
-        d.id.toLowerCase().includes(filters.searchId.toLowerCase())
-      )
-    }
-
-    setFilteredDetections(filtered)
-  }
-
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters)
+  const stats = {
+    total: filteredDetections.length,
+    rhinos: filteredDetections.filter(d => d.class_name?.toLowerCase().includes('rhino')).length,
+    threats: filteredDetections.filter(d => 
+      d.class_name?.toLowerCase().includes('human') || 
+      d.class_name?.toLowerCase().includes('poacher')
+    ).length,
+    active: filteredDetections.filter(d => {
+      const age = Date.now() - new Date(d.timestamp).getTime()
+      return age < 3600000 // Last hour
+    }).length
   }
 
   return (
-    <div className="page-dashboard">
-      <motion.div
-        className="dashboard-layout"
-        initial="animate"
-        animate="animate"
-        variants={panelAnimations.staggerContainer}
-      >
-        <motion.div variants={panelAnimations.staggerItem}>
-          <Sidebar
-            onFilterChange={handleFilterChange}
-            onRefresh={loadDetections}
-            detectionCount={filteredDetections.length}
-          />
-        </motion.div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-white mb-2">
+          Live Detection Dashboard
+        </h1>
+        <p className="text-slate-400">
+          Real-time monitoring of rhino populations and potential threats
+        </p>
+      </div>
 
-        <motion.div
-          className="dashboard-main"
-          variants={panelAnimations.staggerItem}
-        >
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Total Detections', value: stats.total, icon: FiMapPin, color: 'blue' },
+          { label: 'Rhinos Detected', value: stats.rhinos, icon: FiShield, color: 'emerald' },
+          { label: 'Active Alerts', value: stats.active, icon: FiActivity, color: 'amber' },
+          { label: 'Threats', value: stats.threats, icon: FiAlertTriangle, color: 'red' }
+        ].map((stat, i) => (
           <motion.div
-            className="map-section"
-            initial={panelAnimations.fadeInUp.initial}
-            animate={panelAnimations.fadeInUp.animate}
-            transition={{ ...panelAnimations.fadeInUp.transition, delay: 0.15 }}
-            whileHover={{ scale: 1.005, boxShadow: '0 24px 48px rgba(0, 0, 0, 0.14)' }}
+            key={stat.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className={'bg-' + stat.color + '-500/10 border border-' + stat.color + '-500/20 rounded-xl p-4 backdrop-blur-sm'}
           >
+            <div className="flex items-center justify-between mb-2">
+              <stat.icon className={'w-5 h-5 text-' + stat.color + '-400'} />
+              <span className={'text-2xl font-bold text-' + stat.color + '-300'}>
+                {stat.value}
+              </span>
+            </div>
+            <p className="text-sm text-slate-400">{stat.label}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Sidebar */}
+        <div className="lg:col-span-1">
+          <Sidebar filters={filters} onFilterChange={setFilters} />
+        </div>
+
+        {/* Map and Detections */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Map */}
+          <div className="h-96 lg:h-[500px]">
             <Map
               detections={filteredDetections}
               onMarkerClick={setSelectedDetection}
             />
-          </motion.div>
-        </motion.div>
-
-        {/* <div className="dashboard-detections">
-          <div className="detections-header">
-            <h3>Recent Detections</h3>
-            {loading && <span className="loading-spinner">⟳</span>}
           </div>
 
-          <motion.div
-            className="detections-list"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              visible: {
-                transition: {
-                  staggerChildren: 0.05
-                }
-              }
-            }}
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredDetections.length === 0 ? (
-                <motion.div
-                  className="no-results"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                >
-                  <p>No detections found</p>
-                  {Object.values(filters).some((f) => f) && (
-                    <button
-                      className="btn btn-secondary btn-small"
-                      onClick={() => setFilters({})}
-                    >
-                      Clear Filters
-                    </button>
-                  )}
-                </motion.div>
-              ) : (
-                filteredDetections.map((detection, index) => (
+          {/* Recent Detections */}
+          <div>
+            <h2 className="text-xl font-bold text-white mb-4">
+              Recent Detections ({filteredDetections.length})
+            </h2>
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : filteredDetections.length === 0 ? (
+              <div className="text-center py-12 bg-slate-900/30 rounded-xl border border-white/10">
+                <p className="text-slate-400">No detections found matching your filters</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {filteredDetections.slice(0, 6).map((detection) => (
                   <DetectionCard
                     key={detection.id}
                     detection={detection}
-                    isSelected={selectedDetection?.id === detection.id}
                     onClick={() => setSelectedDetection(detection)}
                   />
-                ))
-              )}
-            </AnimatePresence>
-          </motion.div>
-        </div> */}
-      </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
