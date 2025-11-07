@@ -1,21 +1,13 @@
 import { useState } from 'react'
 import './App.css'
 import { ThemeProvider } from './context/ThemeContext'
-import HeaderPillNav from './components/HeaderPillNav'
+import ModernNav from './components/ModernNav'
 import AlertNotification from './components/AlertNotification'
 import ParallaxBackground from './components/ParallaxBackground'
 import Dashboard from './pages/Dashboard'
 import History from './pages/History'
 import Analytics from './pages/Analytics'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MdDashboard, MdHistory, MdAnalytics } from 'react-icons/md'
-
-// Navigation items for HeaderPillNav
-const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: MdDashboard },
-  { id: 'history', label: 'History', icon: MdHistory },
-  { id: 'analytics', label: 'Analytics', icon: MdAnalytics },
-]
 
 /**
  * Main Application Component
@@ -105,11 +97,9 @@ export default function App() {
     <ThemeProvider>
       <div className="app">
         <ParallaxBackground section={getParallaxSection(currentPage)} />
-        <HeaderPillNav
-          items={navItems}
-          value={currentPage}
-          onChange={handleNavigate}
-          slogan="Wildlife Protection"
+        <ModernNav
+          currentPage={currentPage}
+          onNavigate={handleNavigate}
         />
 
         <main className="app-main" style={{ position: 'relative', zIndex: 1 }}>
