@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { FiMapPin, FiActivity, FiAlertTriangle, FiShield } from 'react-icons/fi'
 import Map from '../components/Map'
@@ -23,8 +23,6 @@ export default function Dashboard({ onAlert }) {
 
   // Alert Ranger state
   const { activeAlerts, selectAlert, selectedAlertId, isDetailPanelOpen, closeDetailPanel } = useAlertRanger()
-  const mapRef = useRef(null)
-
   useEffect(() => {
     loadDetections()
   }, [])
@@ -156,7 +154,6 @@ export default function Dashboard({ onAlert }) {
           {/* Map */}
           <div className="h-96 lg:h-[500px]">
             <Map
-              ref={mapRef}
               detections={filteredDetections}
               center={mapCenter}
               zoom={mapZoom}

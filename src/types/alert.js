@@ -184,6 +184,10 @@ export const deriveAlertType = (detectionClass) => {
  * Derives alert severity from detection
  */
 export const deriveAlertSeverity = (detection) => {
+  if (!detection) {
+    return AlertSeverity.LOW
+  }
+
   const className = detection.class_name?.toLowerCase() || ''
   const confidence = detection.confidence || 0
 
