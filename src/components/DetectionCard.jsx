@@ -1,16 +1,24 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { FiMapPin, FiClock, FiZap } from 'react-icons/fi'
+import { FiMapPin, FiClock, FiZap, FiAlertTriangle, FiCheckCircle, FiEye } from 'react-icons/fi'
 import { format } from 'date-fns'
+import { useAlertRanger } from '../context/AlertRangerContext'
+import { shouldShowAlertRanger } from '../types/alert'
+import AlertConfirmModal from './AlertConfirmModal'
 
-export default function DetectionCard({ detection, onClick }) {
+export default function DetectionCard({ detection, onClick, onAlertCreated }) {
+  const { hasActiveAlert, createAlertFromDetection } = useAlertRanger()
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
+  const [isAlertSending, setIsAlertSending] = useState(false)
+
   const isRhino = detection.class_name?.toLowerCase().includes('rhino')
-  const isThreat = detection.class_name?.toLowerCase().includes('human') || 
+  const isThreat = detection.class_name?.toLowerCase().includes('human') ||
                    detection.class_name?.toLowerCase().includes('vehicle') ||
                    detection.class_name?.toLowerCase().includes('poacher')
 
-  const cardStyle = isRhino 
-    ? 'border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10' 
-    : isThreat 
+  const cardStyle = isRhino
+    ? 'border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10'
+    : isThreat
     ? 'border-red-500/30 bg-red-500/5 hover:bg-red-500/10'
     : 'border-slate-700 bg-slate-800/30 hover:bg-slate-800/50'
 
@@ -19,6 +27,42 @@ export default function DetectionCard({ detection, onClick }) {
     : isThreat
     ? 'bg-red-500/20 text-red-300 border-red-500/30'
     : 'bg-slate-500/20 text-slate-300 border-slate-500/30'
+
+  // Check if this detection should show Alert Ranger button
+  const showAlertRanger = shouldShowAlertRanger(detection)
+  const activeAlert = hasActiveAlert(detection.id)
+
+  const handleAlertRanger = (e) => {
+    e.stopPropagation()
+    setIsAlertModalOpen(true)
+  }
+
+  const handleViewAlert = (e) => {
+    e.stopPropagation()
+    if (onAlertCreated) {
+      onAlertCreated(detection.id)
+    }
+  }
+
+  const handleConfirmAlert = async (overrides) => {
+    try {
+      setIsAlertSending(true)
+      const newAlert = await createAlertFromDetection(detection, overrides)
+
+      // Success - close modal
+      setIsAlertModalOpen(false)
+
+      // Notify parent
+      if (onAlertCreated) {
+        onAlertCreated(newAlert)
+      }
+    } catch (error) {
+      // Error is handled in modal
+      throw error
+    } finally {
+      setIsAlertSending(false)
+    }
+  }
 
   return (
     <motion.div
@@ -89,7 +133,38 @@ export default function DetectionCard({ detection, onClick }) {
             </div>
           )}
         </div>
+
+        {/* Alert Ranger Button */}
+        {showAlertRanger && (
+          <div className="mt-4 pt-4 border-t border-slate-700">
+            {activeAlert ? (
+              <button
+                onClick={handleViewAlert}
+                className="w-full px-4 py-2 rounded-lg bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 text-green-300 font-semibold text-sm transition-colors flex items-center justify-center gap-2"
+              >
+                <FiCheckCircle className="w-4 h-4" />
+                Alert Sent - View
+              </button>
+            ) : (
+              <button
+                onClick={handleAlertRanger}
+                className="w-full px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2"
+              >
+                <FiAlertTriangle className="w-4 h-4" />
+                Alert Ranger
+              </button>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Alert Confirm Modal */}
+      <AlertConfirmModal
+        detection={detection}
+        isOpen={isAlertModalOpen}
+        onClose={() => setIsAlertModalOpen(false)}
+        onConfirm={handleConfirmAlert}
+      />
     </motion.div>
   )
 }

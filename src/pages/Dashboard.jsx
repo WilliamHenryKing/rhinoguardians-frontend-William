@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { FiMapPin, FiActivity, FiAlertTriangle, FiShield } from 'react-icons/fi'
 import Map from '../components/Map'
 import DetectionCard from '../components/DetectionCard'
 import Sidebar from '../components/Sidebar'
+import ActiveAlertsPanel from '../components/ActiveAlertsPanel'
+import AlertDetailPanel from '../components/AlertDetailPanel'
 import { getMockDetections } from '../api/mockData'
+import { useAlertRanger } from '../context/AlertRangerContext'
 
 export default function Dashboard({ onAlert }) {
   const [detections, setDetections] = useState([])
@@ -15,6 +18,12 @@ export default function Dashboard({ onAlert }) {
     minConfidence: 0
   })
   const [loading, setLoading] = useState(true)
+  const [mapCenter, setMapCenter] = useState([-23.8859, 31.5205])
+  const [mapZoom, setMapZoom] = useState(10)
+
+  // Alert Ranger state
+  const { activeAlerts, selectAlert, selectedAlertId, isDetailPanelOpen, closeDetailPanel } = useAlertRanger()
+  const mapRef = useRef(null)
 
   useEffect(() => {
     loadDetections()
@@ -64,14 +73,37 @@ export default function Dashboard({ onAlert }) {
   const stats = {
     total: filteredDetections.length,
     rhinos: filteredDetections.filter(d => d.class_name?.toLowerCase().includes('rhino')).length,
-    threats: filteredDetections.filter(d => 
-      d.class_name?.toLowerCase().includes('human') || 
+    threats: filteredDetections.filter(d =>
+      d.class_name?.toLowerCase().includes('human') ||
       d.class_name?.toLowerCase().includes('poacher')
     ).length,
-    active: filteredDetections.filter(d => {
-      const age = Date.now() - new Date(d.timestamp).getTime()
-      return age < 3600000 // Last hour
-    }).length
+    activeAlerts: activeAlerts.length
+  }
+
+  // Handle alert created - show success notification
+  const handleAlertCreated = (alert) => {
+    onAlert({
+      type: 'success',
+      title: 'Alert Sent',
+      message: `Alert ${alert.id} sent to ranger network. Awaiting acknowledgment.`
+    })
+
+    // Focus map on alert location if it's an alert object
+    if (alert.location) {
+      setMapCenter([alert.location.lat, alert.location.lng])
+      setMapZoom(14)
+    }
+  }
+
+  // Handle alert selection from panel
+  const handleAlertSelect = (alert) => {
+    selectAlert(alert.id)
+  }
+
+  // Handle map focus from alert panel
+  const handleMapFocus = (location, alert) => {
+    setMapCenter(location)
+    setMapZoom(14)
   }
 
   return (
@@ -91,7 +123,7 @@ export default function Dashboard({ onAlert }) {
         {[
           { label: 'Total Detections', value: stats.total, icon: FiMapPin, color: 'blue' },
           { label: 'Rhinos Detected', value: stats.rhinos, icon: FiShield, color: 'emerald' },
-          { label: 'Active Alerts', value: stats.active, icon: FiActivity, color: 'amber' },
+          { label: 'Ranger Alerts', value: stats.activeAlerts, icon: FiActivity, color: 'amber' },
           { label: 'Threats', value: stats.threats, icon: FiAlertTriangle, color: 'red' }
         ].map((stat, i) => (
           <motion.div
@@ -113,19 +145,23 @@ export default function Dashboard({ onAlert }) {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         {/* Sidebar */}
-        <div className="lg:col-span-1">
+        <div className="xl:col-span-2">
           <Sidebar filters={filters} onFilterChange={setFilters} />
         </div>
 
         {/* Map and Detections */}
-        <div className="lg:col-span-3 space-y-6">
+        <div className="xl:col-span-7 space-y-6">
           {/* Map */}
           <div className="h-96 lg:h-[500px]">
             <Map
+              ref={mapRef}
               detections={filteredDetections}
+              center={mapCenter}
+              zoom={mapZoom}
               onMarkerClick={setSelectedDetection}
+              onAlertCreated={handleAlertCreated}
             />
           </div>
 
@@ -149,13 +185,31 @@ export default function Dashboard({ onAlert }) {
                     key={detection.id}
                     detection={detection}
                     onClick={() => setSelectedDetection(detection)}
+                    onAlertCreated={handleAlertCreated}
                   />
                 ))}
               </div>
             )}
           </div>
         </div>
+
+        {/* Active Alerts Panel */}
+        <div className="xl:col-span-3">
+          <div className="sticky top-24 h-[calc(100vh-8rem)]">
+            <ActiveAlertsPanel
+              onAlertSelect={handleAlertSelect}
+              onMapFocus={handleMapFocus}
+            />
+          </div>
+        </div>
       </div>
+
+      {/* Alert Detail Panel */}
+      <AlertDetailPanel
+        alertId={selectedAlertId}
+        isOpen={isDetailPanelOpen}
+        onClose={closeDetailPanel}
+      />
     </div>
   )
 }
