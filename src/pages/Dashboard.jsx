@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FiMapPin, FiActivity, FiAlertTriangle, FiShield } from 'react-icons/fi'
+import { FiMapPin, FiActivity, FiAlertTriangle, FiShield, FiFilter, FiX } from 'react-icons/fi'
 import Map from '../components/Map'
 import DetectionCard from '../components/DetectionCard'
 import Sidebar from '../components/Sidebar'
@@ -20,6 +20,7 @@ export default function Dashboard({ onAlert }) {
   const [loading, setLoading] = useState(true)
   const [mapCenter, setMapCenter] = useState([-23.8859, 31.5205])
   const [mapZoom, setMapZoom] = useState(10)
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   // Alert Ranger state
   const { activeAlerts, selectAlert, selectedAlertId, isDetailPanelOpen, closeDetailPanel } = useAlertRanger()
@@ -104,6 +105,9 @@ export default function Dashboard({ onAlert }) {
     setMapZoom(14)
   }
 
+  const toggleFilters = () => setIsFilterOpen(prev => !prev)
+  const closeFilters = () => setIsFilterOpen(false)
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -116,43 +120,46 @@ export default function Dashboard({ onAlert }) {
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Detections', value: stats.total, icon: FiMapPin, color: 'blue' },
-          { label: 'Rhinos Detected', value: stats.rhinos, icon: FiShield, color: 'emerald' },
-          { label: 'Ranger Alerts', value: stats.activeAlerts, icon: FiActivity, color: 'amber' },
-          { label: 'Threats', value: stats.threats, icon: FiAlertTriangle, color: 'red' }
-        ].map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className={'bg-' + stat.color + '-500/10 border border-' + stat.color + '-500/20 rounded-xl p-4 backdrop-blur-sm'}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <stat.icon className={'w-5 h-5 text-' + stat.color + '-400'} />
-              <span className={'text-2xl font-bold text-' + stat.color + '-300'}>
-                {stat.value}
-              </span>
-            </div>
-            <p className="text-sm text-slate-400">{stat.label}</p>
-          </motion.div>
-        ))}
-      </div>
-
       {/* Main Content */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        {/* Sidebar */}
-        <div className="xl:col-span-2">
-          <Sidebar filters={filters} onFilterChange={setFilters} />
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,5fr)_minmax(0,3fr)] gap-6 lg:gap-8 items-start">
+        {/* Sidebar Shell */}
+        <div className="order-4 lg:order-1 lg:col-span-1">
+          <div className="hidden lg:block sticky top-24">
+            <Sidebar filters={filters} onFilterChange={setFilters} />
+          </div>
+
+          {/* Mobile/Tablet Drawer */}
+          <div className={`lg:hidden fixed inset-0 z-40 transition-opacity ${
+            isFilterOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
+          }`}
+          >
+            <div
+              className={`absolute inset-y-0 left-0 w-full max-w-sm bg-slate-900/95 backdrop-blur-xl border-r border-white/10 transform transition-transform duration-300 ease-in-out ${
+                isFilterOpen ? 'translate-x-0' : '-translate-x-full'
+              }`}
+            >
+              <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
+                <h3 className="text-lg font-semibold text-white">Filters</h3>
+                <button
+                  onClick={closeFilters}
+                  className="inline-flex items-center justify-center rounded-full p-2 text-slate-300 hover:text-white hover:bg-white/10 transition"
+                  aria-label="Close filters"
+                >
+                  <FiX className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="h-[calc(100vh-4.5rem)] overflow-y-auto p-4">
+                <Sidebar filters={filters} onFilterChange={setFilters} />
+              </div>
+            </div>
+            <div className="absolute inset-0 bg-black/60" onClick={closeFilters} aria-hidden="true" />
+          </div>
         </div>
 
-        {/* Map and Detections */}
-        <div className="xl:col-span-7 space-y-6">
+        {/* Map, Stats & Detections */}
+        <div className="order-1 lg:order-2 lg:col-span-1 flex flex-col gap-6">
           {/* Map */}
-          <div className="h-96 lg:h-[500px]">
+          <div className="relative rounded-2xl border border-white/10 bg-slate-900/40 overflow-hidden h-[60vh] sm:h-[50vh] xl:h-full min-h-[320px]">
             <Map
               detections={filteredDetections}
               center={mapCenter}
@@ -162,9 +169,47 @@ export default function Dashboard({ onAlert }) {
             />
           </div>
 
+          {/* Stats */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-xl font-semibold text-white">Key Metrics</h2>
+              <button
+                onClick={toggleFilters}
+                className="lg:hidden inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-200 hover:bg-emerald-500/20 transition"
+              >
+                <FiFilter className="h-4 w-4" />
+                Filters
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              {[
+                { label: 'Total Detections', value: stats.total, icon: FiMapPin, color: 'blue' },
+                { label: 'Rhinos Detected', value: stats.rhinos, icon: FiShield, color: 'emerald' },
+                { label: 'Ranger Alerts', value: stats.activeAlerts, icon: FiActivity, color: 'amber' },
+                { label: 'Threats', value: stats.threats, icon: FiAlertTriangle, color: 'red' }
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className={'bg-' + stat.color + '-500/10 border border-' + stat.color + '-500/20 rounded-xl p-4 backdrop-blur-sm'}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <stat.icon className={'w-5 h-5 text-' + stat.color + '-400'} />
+                    <span className={'text-2xl font-bold text-' + stat.color + '-300'}>
+                      {stat.value}
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-400">{stat.label}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
           {/* Recent Detections */}
-          <div>
-            <h2 className="text-xl font-bold text-white mb-4">
+          <div className="flex flex-col gap-4">
+            <h2 className="text-xl font-bold text-white">
               Recent Detections ({filteredDetections.length})
             </h2>
             {loading ? (
@@ -191,8 +236,8 @@ export default function Dashboard({ onAlert }) {
         </div>
 
         {/* Active Alerts Panel */}
-        <div className="xl:col-span-3">
-          <div className="sticky top-24 h-[calc(100vh-8rem)]">
+        <div className="order-3 lg:order-3 lg:col-span-1">
+          <div className="sticky top-24 h-full lg:h-[calc(100vh-8rem)] space-y-4">
             <ActiveAlertsPanel
               onAlertSelect={handleAlertSelect}
               onMapFocus={handleMapFocus}
