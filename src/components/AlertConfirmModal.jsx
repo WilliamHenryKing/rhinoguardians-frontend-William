@@ -49,6 +49,11 @@ export default function AlertConfirmModal({ detection, isOpen, onClose, onConfir
     return () => setIsMounted(false)
   }, [])
 
+  useEffect(() => {
+    setAlertType(deriveAlertType(detection?.class_name))
+    setSeverity(deriveAlertSeverity(detection))
+  }, [detection])
+
   const handleConfirm = async () => {
     setIsSending(true)
     setError(null)
