@@ -8,6 +8,7 @@
  */
 
 import { useState, useMemo, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiX, FiAlertTriangle, FiMapPin, FiClock, FiZap, FiSend } from 'react-icons/fi'
 import { format } from 'date-fns'
@@ -36,6 +37,17 @@ export default function AlertConfirmModal({ detection, isOpen, onClose, onConfir
   const [notes, setNotes] = useState('')
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState(null)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setAlertType(deriveAlertType(detection?.class_name))
+    setSeverity(deriveAlertSeverity(detection))
+  }, [detection])
+
+  useEffect(() => {
+    setIsMounted(true)
+    return () => setIsMounted(false)
+  }, [])
 
   useEffect(() => {
     setAlertType(deriveAlertType(detection?.class_name))
@@ -81,9 +93,9 @@ export default function AlertConfirmModal({ detection, isOpen, onClose, onConfir
     return true
   }, [detection, severity])
 
-  if (!detection) return null
+  if (!detection || !isMounted) return null
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -315,6 +327,7 @@ export default function AlertConfirmModal({ detection, isOpen, onClose, onConfir
           </div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }
