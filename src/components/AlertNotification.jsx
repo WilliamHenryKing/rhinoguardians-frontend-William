@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { FiX, FiAlertTriangle, FiInfo, FiCheckCircle, FiAlertCircle } from 'react-icons/fi'
 
-export default function AlertNotification({ alert, onClose }) {
+export default function AlertNotification({ alert, onClose, className = '' }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose()
@@ -54,10 +54,10 @@ export default function AlertNotification({ alert, onClose }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 100, scale: 0.9 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 100, scale: 0.9 }}
-      className={'flex items-start gap-3 p-4 rounded-xl backdrop-blur-lg border ' + config.bg + ' ' + config.border}
+      initial={{ opacity: 0, y: 24, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 24, scale: 0.95 }}
+      className={`flex items-start gap-3 p-4 rounded-xl backdrop-blur-lg border ${config.bg} ${config.border} ${className}`.trim()}
     >
       <div className={'p-2 rounded-lg ' + config.iconBg}>
         <Icon className={'w-5 h-5 ' + config.text} />
