@@ -70,6 +70,24 @@
 }
 
 @layer components {
+  .detection-card__meta {
+    @apply grid-cols-1;
+  }
+
+  @container (max-width: 280px) {
+    .detection-card__media {
+      @apply h-32;
+    }
+
+    .detection-card__meta {
+      @apply grid-cols-2 gap-2 text-xs;
+    }
+
+    .detection-card__status-dot {
+      @apply hidden;
+    }
+  }
+
   .map-popup {
     container-type: inline-size;
   }
