@@ -16,6 +16,7 @@ import { FiAlertTriangle, FiChevronDown, FiChevronUp, FiMapPin, FiClock } from '
 import { format, formatDistanceToNow } from 'date-fns'
 import { useAlertRanger } from '../context/AlertRangerContext'
 import { STATUS_CONFIG, SEVERITY_CONFIG, formatAlertId } from '../types/alert'
+import { LG_MIN_WIDTH_MEDIA_QUERY } from '../utils/breakpoints'
 import { useEffect, useState } from 'react'
 
 function AlertItem({ alert, onSelect }) {
@@ -92,7 +93,7 @@ export default function ActiveAlertsPanel({ onAlertSelect, onMapFocus }) {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const mq = window.matchMedia('(min-width: 1024px)')
+    const mq = window.matchMedia(LG_MIN_WIDTH_MEDIA_QUERY)
     const handleChange = (event) => setIsExpanded(event.matches)
 
     setIsExpanded(mq.matches)

@@ -11,6 +11,7 @@ import { FiX, FiMapPin, FiClock, FiUser, FiFileText, FiCheckCircle, FiAlertCircl
 import { format } from 'date-fns'
 import { useAlertRanger } from '../context/AlertRangerContext'
 import { STATUS_CONFIG, SEVERITY_CONFIG, formatAlertId, AlertStatus } from '../types/alert'
+import { LG_MIN_WIDTH_MEDIA_QUERY } from '../utils/breakpoints'
 
 function TimelineItem({ status, label, timestamp, isCurrent = false }) {
   const config = STATUS_CONFIG[status]
@@ -62,7 +63,7 @@ export default function AlertDetailPanel({ alertId, isOpen, onClose }) {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const mq = window.matchMedia('(min-width: 1024px)')
+    const mq = window.matchMedia(LG_MIN_WIDTH_MEDIA_QUERY)
     const handleChange = (event) => setIsDesktop(event.matches)
 
     setIsDesktop(mq.matches)
