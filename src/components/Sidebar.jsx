@@ -9,7 +9,7 @@ export default function Sidebar({ filters, onFilterChange, onClose }) {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="w-full lg:w-80 bg-slate-900/50 backdrop-blur-lg border border-white/10 rounded-xl p-6"
+      className="w-full md:w-full lg:w-80 xl:w-[22rem] 2xl:w-96 bg-slate-900/50 backdrop-blur-lg border border-white/10 rounded-xl p-6 lg:p-7 xl:p-8"
     >
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">

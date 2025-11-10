@@ -74,8 +74,8 @@ export default function History({ onAlert }) {
   const closeFilters = () => setIsFilterOpen(false)
 
   return (
-    <div className="lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-8 lg:items-start">
-      <div className="hidden lg:block sticky top-24 h-fit">
+    <div className="md:grid md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(0,1fr)] md:gap-6 lg:gap-8 xl:gap-10 md:items-start">
+      <div className="hidden md:block sticky top-24 h-fit">
         <Sidebar filters={filters} onFilterChange={setFilters} />
       </div>
 
@@ -114,7 +114,7 @@ export default function History({ onAlert }) {
 
         {/* Mobile/Tablet Drawer */}
         <div
-          className={`lg:hidden fixed inset-0 z-40 transition-opacity ${
+          className={`md:hidden fixed inset-0 z-40 transition-opacity ${
             isFilterOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
           }`}
         >
@@ -153,7 +153,7 @@ export default function History({ onAlert }) {
             </div>
             <button
               onClick={openFilters}
-              className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 transition lg:hidden"
+              className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-emerald-400/40 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 transition md:hidden"
               aria-label="Open filters"
             >
               <FiFilter className="w-5 h-5" />
@@ -169,7 +169,7 @@ export default function History({ onAlert }) {
               <p className="text-slate-400">No detections found matching your criteria</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-5 xl:gap-6">
               {filteredDetections.map((detection, i) => (
                 <motion.div
                   key={detection.id}

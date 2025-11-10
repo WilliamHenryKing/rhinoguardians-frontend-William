@@ -248,7 +248,7 @@ export default function Map({
         animate={{ opacity: 1, scale: 1 }}
         className={[
           'relative w-full min-h-[320px] rounded-xl border border-white/10 shadow-2xl overflow-hidden',
-          'aspect-[4/5] sm:aspect-[16/9] xl:aspect-auto',
+          'aspect-[4/5] sm:aspect-[16/9] md:aspect-[16/9] lg:aspect-[16/10] xl:aspect-auto',
           className,
         ]
           .filter(Boolean)
@@ -323,7 +323,7 @@ export default function Map({
         </MapContainer>
 
         <div className="pointer-events-none absolute left-4 top-4 z-[1000] max-w-full">
-          <div className="flex flex-row flex-wrap gap-3 pointer-events-auto sm:flex-col md:flex-row">
+          <div className="flex flex-row flex-wrap gap-3 pointer-events-auto sm:flex-col md:flex-row lg:gap-4 xl:gap-4">
             <div className="flex items-center overflow-hidden rounded-full border border-white/10 bg-slate-900/80 backdrop-blur-sm text-slate-100 shadow-lg">
               <button
                 type="button"

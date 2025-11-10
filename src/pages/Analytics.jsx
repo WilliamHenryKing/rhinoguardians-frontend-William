@@ -70,7 +70,7 @@ export default function Analytics({ onAlert }) {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
         {[
           {
             label: 'Total Detections',
@@ -128,7 +128,7 @@ export default function Analytics({ onAlert }) {
 
       {/* Charts and Heatmap */}
       <div className="space-y-6">
-        <div className="grid grid-flow-col auto-cols-[minmax(18rem,1fr)] gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-2 px-2 sm:mx-0 sm:px-0 lg:grid lg:grid-flow-row lg:grid-cols-2 lg:gap-6 lg:overflow-visible lg:snap-none lg:pb-0">
+        <div className="grid grid-flow-col auto-cols-[minmax(18rem,1fr)] gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-2 px-2 sm:mx-0 sm:px-0 md:grid md:grid-flow-row md:grid-cols-2 md:gap-5 md:overflow-visible md:snap-none md:pb-0 lg:gap-6 xl:gap-8">
           {/* Detection Heatmap */}
           <div className="snap-center min-w-[18rem] lg:min-w-0 bg-slate-900/50 border border-white/10 rounded-xl p-5 sm:p-6">
             <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Detection Heatmap</h2>
@@ -172,7 +172,7 @@ export default function Analytics({ onAlert }) {
           </div>
         </div>
 
-        <div className="grid grid-flow-col auto-cols-[minmax(18rem,1fr)] gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-2 px-2 sm:mx-0 sm:px-0 lg:grid lg:grid-flow-row lg:grid-cols-2 lg:gap-6 lg:overflow-visible lg:snap-none lg:pb-0">
+        <div className="grid grid-flow-col auto-cols-[minmax(18rem,1fr)] gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-2 px-2 sm:mx-0 sm:px-0 md:grid md:grid-flow-row md:grid-cols-2 md:gap-5 md:overflow-visible md:snap-none md:pb-0 lg:gap-6 xl:gap-8">
           {/* Peak Activity Hours */}
           <div className="snap-center min-w-[18rem] lg:min-w-0 bg-slate-900/50 border border-white/10 rounded-xl p-5 sm:p-6">
             <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Peak Activity Hours</h2>

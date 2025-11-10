@@ -156,11 +156,11 @@ export default function DetectionCard({ detection, onClick, onAlertCreated }) {
 
         {showAlertRanger && (
           <div className="detection-card__actions mt-2 border-t border-slate-700 pt-4">
-            <div className="flex flex-col gap-fluid-sm sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-fluid-sm sm:flex-row sm:items-center md:flex-col lg:flex-row xl:flex-row">
               <button
                 type="button"
                 onClick={handleViewDetails}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-600/60 bg-transparent px-4 py-2 text-sm font-semibold text-slate-200 transition-colors hover:bg-slate-800/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-60 disabled:hover:bg-transparent sm:w-auto sm:flex-1"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-600/60 bg-transparent px-4 py-2 text-sm font-semibold text-slate-200 transition-colors hover:bg-slate-800/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-60 disabled:hover:bg-transparent sm:w-auto sm:flex-1 md:w-full lg:w-auto lg:flex-1"
                 disabled={!isInteractive}
               >
                 <FiEye className="h-4 w-4" />
@@ -171,7 +171,7 @@ export default function DetectionCard({ detection, onClick, onAlertCreated }) {
                 <button
                   type="button"
                   onClick={handleViewAlert}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-green-500/30 bg-green-600/20 px-4 py-2 text-sm font-semibold text-green-300 transition-colors hover:bg-green-600/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:w-auto sm:flex-1"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-green-500/30 bg-green-600/20 px-4 py-2 text-sm font-semibold text-green-300 transition-colors hover:bg-green-600/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:w-auto sm:flex-1 md:w-full lg:w-auto lg:flex-1"
                   disabled={isAlertSending}
                 >
                   <FiCheckCircle className="h-4 w-4" />
@@ -181,7 +181,7 @@ export default function DetectionCard({ detection, onClick, onAlertCreated }) {
                 <button
                   type="button"
                   onClick={handleAlertRanger}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:w-auto sm:flex-1"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:w-auto sm:flex-1 md:w-full lg:w-auto lg:flex-1"
                   disabled={isAlertSending}
                 >
                   <FiAlertTriangle className="h-4 w-4" />

@@ -121,7 +121,7 @@ export default function Dashboard({ onAlert }) {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,5fr)_minmax(0,3fr)] gap-6 lg:gap-8 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:grid-cols-[minmax(0,2fr)_minmax(0,5fr)_minmax(0,3fr)] gap-6 md:gap-7 lg:gap-8 xl:gap-10 items-start">
         {/* Sidebar Shell */}
         <div className="order-4 lg:order-1 lg:col-span-1">
           <div className="hidden lg:block sticky top-24">
@@ -159,7 +159,7 @@ export default function Dashboard({ onAlert }) {
         {/* Map, Stats & Detections */}
         <div className="order-1 lg:order-2 lg:col-span-1 flex flex-col gap-6">
           {/* Map */}
-          <div className="relative rounded-2xl border border-white/10 bg-slate-900/40 overflow-hidden h-[60vh] sm:h-[50vh] xl:h-full min-h-[320px]">
+          <div className="relative rounded-2xl border border-white/10 bg-slate-900/40 overflow-hidden h-[60vh] sm:h-[50vh] md:h-[55vh] lg:h-[65vh] xl:h-full min-h-[320px]">
             <Map
               detections={filteredDetections}
               center={mapCenter}
@@ -182,7 +182,7 @@ export default function Dashboard({ onAlert }) {
                 Filters
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5 xl:gap-6">
               {[
                 { label: 'Total Detections', value: stats.total, icon: FiMapPin, color: 'blue' },
                 { label: 'Rhinos Detected', value: stats.rhinos, icon: FiShield, color: 'emerald' },
@@ -222,7 +222,7 @@ export default function Dashboard({ onAlert }) {
                 <p className="text-slate-400">No detections found matching your filters</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-4 lg:gap-5 xl:gap-6">
                 {filteredDetections.slice(0, 6).map((detection) => (
                   <DetectionCard
                     key={detection.id}

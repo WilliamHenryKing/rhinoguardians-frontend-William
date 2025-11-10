@@ -121,7 +121,7 @@ export default function ActiveAlertsPanel({ onAlertSelect, onMapFocus }) {
     >
       <motion.div
         layout
-        className="fixed inset-x-0 bottom-0 max-h-[70vh] lg:static lg:max-h-none lg:h-full flex flex-col bg-slate-900/90 backdrop-blur-sm border border-slate-700 lg:rounded-xl rounded-t-3xl shadow-2xl overflow-hidden lg:overflow-visible"
+        className="fixed inset-x-0 bottom-0 max-h-[70vh] md:max-h-[65vh] lg:static lg:max-h-none lg:h-full flex flex-col bg-slate-900/90 backdrop-blur-sm border border-slate-700 lg:rounded-xl rounded-t-3xl shadow-2xl overflow-hidden lg:overflow-visible"
       >
         <div className="lg:hidden flex justify-center pt-3 pb-1">
           <span className="h-1.5 w-14 rounded-full bg-slate-700" />
@@ -176,7 +176,7 @@ export default function ActiveAlertsPanel({ onAlertSelect, onMapFocus }) {
             exit={{ height: 0 }}
             className="flex-1 overflow-hidden flex flex-col"
           >
-            <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-3 max-h-[50vh] sm:max-h-[60vh] md:max-h-[65vh] lg:max-h-none pb-[calc(env(safe-area-inset-bottom,0)+1rem)]">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-3 max-h-[50vh] sm:max-h-[55vh] md:max-h-[60vh] lg:max-h-none xl:max-h-none pb-[calc(env(safe-area-inset-bottom,0)+1rem)]">
               {/* Active Alerts */}
               {activeAlerts.length === 0 ? (
                 <div className="text-center py-8">

@@ -52,7 +52,7 @@ export default function Header({ currentPage, onNavigate }) {
       }}
     >
       {/* Single row: brand + nav + actions - Fixed 64px height */}
-      <div className="mx-auto max-w-[1920px] flex items-center justify-between gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 xl:px-12 h-16 sm:h-[68px] lg:h-[72px]">
+      <div className="mx-auto max-w-[1920px] flex items-center justify-between gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 h-16 sm:h-[68px] md:h-[70px] lg:h-[72px] xl:h-[76px]">
         {/* LEFT: Brand (never shrinks away) */}
         <div className="flex items-center gap-3 shrink-0">
           <motion.div
