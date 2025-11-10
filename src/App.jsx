@@ -75,7 +75,7 @@ export default function App() {
         </main>
 
         {/* Alert Notifications */}
-        <div className="fixed inset-x-4 bottom-[max(env(safe-area-inset-bottom),1rem)] z-50 space-y-3 max-w-lg mx-auto pointer-events-none @container/alerts [container-type:inline-size] @xs/alerts:bottom-[calc(max(env(safe-area-inset-bottom),1rem)+3.5rem)] @xs/alerts:space-y-4 sm:bottom-[max(env(safe-area-inset-bottom),1.5rem)] md:inset-auto md:top-24 md:right-4 md:left-auto md:bottom-auto md:max-w-md">
+        <div className="fixed inset-x-4 bottom-[max(env(safe-area-inset-bottom),1rem)] z-50 space-y-3 max-w-lg mx-auto pointer-events-none @container/alerts [container-type:inline-size] @xs/alerts:bottom-[calc(max(env(safe-area-inset-bottom),1rem)+3.5rem)] @xs/alerts:space-y-4 sm:bottom-[max(env(safe-area-inset-bottom),1.5rem)] md:inset-auto md:top-24 md:right-6 md:left-auto md:bottom-auto md:mx-0 md:w-full md:max-w-sm lg:max-w-md">
           <AnimatePresence>
             {alerts.map((alert) => (
               <AlertNotification
