@@ -121,9 +121,9 @@ export default function Dashboard({ onAlert }) {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:grid-cols-[minmax(0,2fr)_minmax(0,5fr)_minmax(0,3fr)] gap-6 md:gap-7 lg:gap-8 xl:gap-10 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)_minmax(0,360px)] xl:grid-cols-[minmax(0,340px)_minmax(0,1fr)_minmax(0,400px)] gap-6 md:gap-7 lg:gap-8 xl:gap-10 items-start">
         {/* Sidebar Shell */}
-        <div className="order-4 lg:order-1 lg:col-span-1">
+        <div className="order-4 lg:order-1 lg:col-span-1 lg:max-w-[320px] xl:max-w-[340px] lg:w-full">
           <div className="hidden lg:block sticky top-24">
             <Sidebar filters={filters} onFilterChange={setFilters} />
           </div>
@@ -237,7 +237,7 @@ export default function Dashboard({ onAlert }) {
         </div>
 
         {/* Active Alerts Panel */}
-        <div className="order-3 lg:order-3 lg:col-span-1">
+        <div className="order-3 lg:order-3 lg:col-span-1 lg:max-w-[360px] xl:max-w-[400px] lg:w-full">
           <div className="sticky top-24 h-full lg:h-[calc(100vh-8rem)] space-y-4">
             <ActiveAlertsPanel
               onAlertSelect={handleAlertSelect}

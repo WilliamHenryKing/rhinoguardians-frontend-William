@@ -323,7 +323,7 @@ export default function Map({
         </MapContainer>
 
         <div className="pointer-events-none absolute left-4 top-4 z-[1000] max-w-full">
-          <div className="flex flex-row flex-wrap gap-3 pointer-events-auto sm:flex-col md:flex-row lg:gap-4 xl:gap-4">
+          <div className="flex flex-row flex-wrap gap-3 pointer-events-auto sm:flex-col md:flex-row lg:flex-col lg:items-start lg:gap-5 xl:gap-6">
             <div className="flex items-center overflow-hidden rounded-full border border-white/10 bg-slate-900/80 backdrop-blur-sm text-slate-100 shadow-lg">
               <button
                 type="button"
