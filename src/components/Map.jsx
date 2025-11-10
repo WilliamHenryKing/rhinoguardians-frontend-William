@@ -136,6 +136,7 @@ export default function Map({
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
   const [isLocating, setIsLocating] = useState(false)
   const mapRef = useRef(null)
+  const containerRef = useRef(null)
   const canLocate = typeof navigator !== 'undefined' && Boolean(navigator.geolocation)
 
   const getMarkerIcon = (detection) => {
@@ -241,9 +242,46 @@ export default function Map({
     { label: 'Alert', swatch: 'bg-red-500' },
   ]
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined
+
+    const handleResize = () => {
+      if (mapRef.current) {
+        mapRef.current.invalidateSize()
+      }
+    }
+
+    const frame = requestAnimationFrame(handleResize)
+
+    let resizeObserver
+    if (containerRef.current && typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(handleResize)
+      resizeObserver.observe(containerRef.current)
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      resizeObserver?.disconnect()
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!mapRef.current) return
+
+    const frame = requestAnimationFrame(() => {
+      mapRef.current?.invalidateSize()
+    })
+
+    return () => cancelAnimationFrame(frame)
+  }, [center, zoom, detections.length])
+
   return (
     <>
       <motion.div
+        ref={containerRef}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className={[
@@ -261,6 +299,9 @@ export default function Map({
           zoomControl={true}
           whenCreated={(map) => {
             mapRef.current = map
+            requestAnimationFrame(() => {
+              map.invalidateSize()
+            })
           }}
         >
           <MapController center={center} zoom={zoom} />

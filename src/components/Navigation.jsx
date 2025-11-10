@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FiMap, FiClock, FiBarChart2, FiShield, FiMenu, FiX } from 'react-icons/fi'
 
@@ -7,12 +7,48 @@ export default function Navigation({ currentPage, onNavigate }) {
   const menuRef = useRef(null)
   const toggleRef = useRef(null)
   const focusableRefs = useRef([])
+  const navRef = useRef(null)
+
+  const updateNavHeight = useCallback(() => {
+    if (typeof document === 'undefined' || !navRef.current) return
+
+    const height = navRef.current.getBoundingClientRect().height
+    document.documentElement.style.setProperty('--nav-height', `${Math.ceil(height)}px`)
+  }, [])
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: FiMap },
     { id: 'history', label: 'History', icon: FiClock },
     { id: 'analytics', label: 'Analytics', icon: FiBarChart2 },
   ]
+
+  useEffect(() => {
+    updateNavHeight()
+
+    if (!navRef.current) return
+
+    let resizeObserver
+
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(updateNavHeight)
+      resizeObserver.observe(navRef.current)
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', updateNavHeight)
+    }
+
+    return () => {
+      resizeObserver?.disconnect()
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', updateNavHeight)
+      }
+    }
+  }, [updateNavHeight])
+
+  useEffect(() => {
+    updateNavHeight()
+  }, [menuOpen, currentPage, updateNavHeight])
 
   useEffect(() => {
     if (!menuOpen) {
@@ -99,7 +135,10 @@ export default function Navigation({ currentPage, onNavigate }) {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-lg border-b border-white/10 pt-[env(safe-area-inset-top)]">
+    <nav
+      ref={navRef}
+      className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-lg border-b border-white/10 pt-[env(safe-area-inset-top)]"
+    >
       <div className="max-w-7xl mx-auto px-4 py-3 [container-type:inline-size]">
         <div className="flex flex-col gap-3 @container/md:flex-row @container/md:items-center @container/md:justify-between">
           <div className="flex items-center justify-between gap-3">

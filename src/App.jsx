@@ -60,7 +60,10 @@ export default function App() {
         <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
 
         {/* Main Content */}
-        <main className="relative z-10 container mx-auto max-w-[1800px] flex flex-col gap-y-10 pt-24 xs:pt-20 sm:pt-24 pb-12">
+        <main
+          className="relative z-10 container mx-auto max-w-[1800px] flex flex-col gap-y-10 pb-12"
+          style={{ paddingTop: 'calc(var(--nav-height, 96px) + 1.5rem)' }}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={currentPage}
@@ -75,7 +78,9 @@ export default function App() {
         </main>
 
         {/* Alert Notifications */}
-        <div className="fixed inset-x-4 bottom-[max(env(safe-area-inset-bottom),1rem)] z-50 space-y-3 max-w-lg mx-auto pointer-events-none @container/alerts [container-type:inline-size] @xs/alerts:bottom-[calc(max(env(safe-area-inset-bottom),1rem)+3.5rem)] @xs/alerts:space-y-4 sm:bottom-[max(env(safe-area-inset-bottom),1.5rem)] md:inset-auto md:top-24 md:right-6 md:left-auto md:bottom-auto md:mx-0 md:w-full md:max-w-sm lg:max-w-md">
+        <div
+          className="fixed inset-x-4 bottom-[max(env(safe-area-inset-bottom),1rem)] z-50 space-y-3 max-w-lg mx-auto pointer-events-none @container/alerts [container-type:inline-size] @xs/alerts:bottom-[calc(max(env(safe-area-inset-bottom),1rem)+3.5rem)] @xs/alerts:space-y-4 sm:bottom-[max(env(safe-area-inset-bottom),1.5rem)] md:inset-auto md:top-[calc(var(--nav-height,96px)+1rem)] md:right-6 md:left-auto md:bottom-auto md:mx-0 md:w-full md:max-w-sm lg:max-w-md"
+        >
           <AnimatePresence>
             {alerts.map((alert) => (
               <AlertNotification
