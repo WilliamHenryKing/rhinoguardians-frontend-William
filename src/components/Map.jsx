@@ -18,12 +18,16 @@ L.Icon.Default.mergeOptions({
 // Custom marker icons
 const createCustomIcon = (color, pulse = false) => {
   const pulseHtml = pulse
-    ? '<div style="width: 30px; height: 30px; background-color: ' + color + '40; border-radius: 50%; position: absolute; top: -5px; left: -5px; animation: pulse 2s ease-out infinite;"></div>'
+    ? `<div class="absolute -left-[5px] -top-[5px] h-[30px] w-[30px] rounded-full animate-[pulse_2s_ease-out_infinite]" style="background-color: ${color}40;"></div>`
     : ''
 
   return L.divIcon({
     className: 'custom-marker',
-    html: pulseHtml + '<div style="width: 20px; height: 20px; background-color: ' + color + '; border: 3px solid white; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3); position: relative; z-index: 10;"></div>',
+    html:
+      pulseHtml +
+      '<div style="width: 20px; height: 20px; background-color: ' +
+      color +
+      '; border: 3px solid white; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3); position: relative; z-index: 10;"></div>',
     iconSize: [20, 20],
     iconAnchor: [10, 10],
   })
@@ -39,7 +43,8 @@ const alertResolvedIcon = createCustomIcon('#22c55e')
 // Ranger icon
 const rangerIcon = L.divIcon({
   className: 'custom-ranger-marker',
-  html: '<div style="width: 24px; height: 24px; background-color: #3b82f6; border: 3px solid white; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;"><span style="color: white; font-size: 12px; font-weight: bold;">R</span></div>',
+  html:
+    '<div style="width: 24px; height: 24px; background-color: #3b82f6; border: 3px solid white; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;"><span style="color: white; font-size: 12px; font-weight: bold;">R</span></div>',
   iconSize: [24, 24],
   iconAnchor: [12, 12],
 })
@@ -64,62 +69,74 @@ function DetectionPopup({ detection, onAlertRanger, onViewAlert }) {
   const alerts = getAlertsForDetection(detection.id)
 
   return (
-    <div className="p-2 min-w-[200px]">
-      {/* Detection info */}
-      {detection.image_path && (
-        <img
-          src={detection.image_path}
-          alt={detection.class_name}
-          className="w-full h-24 object-cover rounded mb-2"
-        />
-      )}
+    <div className="map-popup">
+      <div className="map-popup-content">
+        {/* Detection info */}
+        {detection.image_path && (
+          <img
+            src={detection.image_path}
+            alt={detection.class_name}
+            className="map-popup-image"
+          />
+        )}
 
-      <h3 className="font-bold text-sm mb-1">{detection.class_name}</h3>
-      <p className="text-xs text-slate-600 mb-1">
-        Confidence: {(detection.confidence * 100).toFixed(1)}%
-      </p>
-      <p className="text-xs text-slate-600 mb-2">
-        {new Date(detection.timestamp).toLocaleString()}
-      </p>
+        <h3 className="map-popup-title">{detection.class_name}</h3>
+        <p className="map-popup-meta">
+          Confidence: {(detection.confidence * 100).toFixed(1)}%
+        </p>
+        <p className="map-popup-meta">
+          {new Date(detection.timestamp).toLocaleString()}
+        </p>
 
-      {/* Alert status */}
-      {alerts.length > 0 && (
-        <div className="mb-2 pb-2 border-b border-slate-200">
-          <p className="text-xs text-slate-500 mb-1">Alert Status:</p>
-          {alerts.map(alert => (
-            <p key={alert.id} className="text-xs font-semibold text-orange-600 capitalize">
-              {alert.status.replace(/_/g, ' ')}
-            </p>
-          ))}
-        </div>
-      )}
+        {/* Alert status */}
+        {alerts.length > 0 && (
+          <div className="map-popup-section">
+            <p className="map-popup-label">Alert Status:</p>
+            {alerts.map(alert => (
+              <p key={alert.id} className="map-popup-alert">
+                {alert.status.replace(/_/g, ' ')}
+              </p>
+            ))}
+          </div>
+        )}
 
-      {/* Alert button */}
-      {showAlertButton && (
-        hasAlert ? (
-          <button
-            onClick={() => onViewAlert(detection)}
-            className="w-full px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded transition-colors"
-          >
-            View Alert
-          </button>
-        ) : (
-          <button
-            onClick={() => onAlertRanger(detection)}
-            className="w-full px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded transition-colors"
-          >
-            Alert Ranger
-          </button>
-        )
-      )}
+        {/* Alert button */}
+        {showAlertButton && (
+          hasAlert ? (
+            <button
+              onClick={() => onViewAlert(detection)}
+              className="map-popup-button map-popup-button--success"
+            >
+              View Alert
+            </button>
+          ) : (
+            <button
+              onClick={() => onAlertRanger(detection)}
+              className="map-popup-button map-popup-button--danger"
+            >
+              Alert Ranger
+            </button>
+          )
+        )}
+      </div>
     </div>
   )
 }
 
-export default function Map({ detections = [], center = [-23.8859, 31.5205], zoom = 10, onMarkerClick, onAlertCreated }) {
+export default function Map({
+  detections = [],
+  center = [-23.8859, 31.5205],
+  zoom = 10,
+  onMarkerClick,
+  onAlertCreated,
+  className = '',
+}) {
   const { getAlertsForDetection, rangerPositions, activeAlerts, createAlertFromDetection } = useAlertRanger()
   const [selectedDetection, setSelectedDetection] = useState(null)
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false)
+  const [isLocating, setIsLocating] = useState(false)
+  const mapRef = useRef(null)
+  const canLocate = typeof navigator !== 'undefined' && Boolean(navigator.geolocation)
 
   const getMarkerIcon = (detection) => {
     const className = detection.class_name?.toLowerCase() || ''
@@ -186,18 +203,65 @@ export default function Map({ detections = [], center = [-23.8859, 31.5205], zoo
     })
   }
 
+  const handleZoomIn = () => {
+    mapRef.current?.zoomIn()
+  }
+
+  const handleZoomOut = () => {
+    mapRef.current?.zoomOut()
+  }
+
+  const handleLocate = () => {
+    if (!canLocate) return
+
+    setIsLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords
+        mapRef.current?.flyTo([latitude, longitude], Math.max(mapRef.current?.getZoom() ?? 10, 14), {
+          duration: 1.2,
+        })
+        setIsLocating(false)
+      },
+      () => {
+        setIsLocating(false)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      }
+    )
+  }
+
+  const legendItems = [
+    { label: 'Rhino', swatch: 'bg-rhino-500' },
+    { label: 'Threat', swatch: 'bg-threat-500' },
+    { label: 'Unknown', swatch: 'bg-blue-500' },
+    { label: 'Alert', swatch: 'bg-red-500' },
+  ]
+
   return (
     <>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full h-full rounded-xl overflow-hidden border border-white/10 shadow-2xl"
+        className={[
+          'relative w-full min-h-[320px] rounded-xl border border-white/10 shadow-2xl overflow-hidden',
+          'aspect-[4/5] sm:aspect-[16/9] xl:aspect-auto',
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
       >
         <MapContainer
           center={center}
           zoom={zoom}
-          className="w-full h-full"
+          className="h-full w-full"
           zoomControl={true}
+          whenCreated={(map) => {
+            mapRef.current = map
+          }}
         >
           <MapController center={center} zoom={zoom} />
 
@@ -234,11 +298,13 @@ export default function Map({ detections = [], center = [-23.8859, 31.5205], zoo
               icon={rangerIcon}
             >
               <Popup>
-                <div className="p-2">
-                  <h3 className="font-bold text-sm mb-1">Ranger {ranger.name || ranger.id}</h3>
-                  <p className="text-xs text-slate-600">
-                    Last update: {ranger.lastUpdate ? new Date(ranger.lastUpdate).toLocaleString() : 'Unknown'}
-                  </p>
+                <div className="map-popup">
+                  <div className="map-popup-content">
+                    <h3 className="map-popup-title">Ranger {ranger.name || ranger.id}</h3>
+                    <p className="map-popup-meta">
+                      Last update: {ranger.lastUpdate ? new Date(ranger.lastUpdate).toLocaleString() : 'Unknown'}
+                    </p>
+                  </div>
                 </div>
               </Popup>
             </Marker>
@@ -255,6 +321,49 @@ export default function Map({ detections = [], center = [-23.8859, 31.5205], zoo
             />
           ))}
         </MapContainer>
+
+        <div className="pointer-events-none absolute left-4 top-4 z-[1000] max-w-full">
+          <div className="flex flex-row flex-wrap gap-3 pointer-events-auto sm:flex-col md:flex-row">
+            <div className="flex items-center overflow-hidden rounded-full border border-white/10 bg-slate-900/80 backdrop-blur-sm text-slate-100 shadow-lg">
+              <button
+                type="button"
+                onClick={handleZoomIn}
+                className="px-3 py-2 text-sm font-semibold transition hover:bg-white/10"
+                aria-label="Zoom in"
+              >
+                +
+              </button>
+              <div className="h-6 w-px bg-white/15" />
+              <button
+                type="button"
+                onClick={handleZoomOut}
+                className="px-3 py-2 text-sm font-semibold transition hover:bg-white/10"
+                aria-label="Zoom out"
+              >
+                -
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleLocate}
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-slate-900/80 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-100 shadow-lg backdrop-blur-sm transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={isLocating || !canLocate}
+              aria-label="Locate your position"
+            >
+              {isLocating ? 'Locating…' : 'Locate'}
+            </button>
+
+            <div className="flex flex-wrap items-center gap-2 rounded-full border border-white/10 bg-slate-900/80 px-3 py-2 text-xs text-slate-100 shadow-lg backdrop-blur-sm">
+              {legendItems.map((item) => (
+                <span key={item.label} className="inline-flex items-center gap-1">
+                  <span className={`h-2.5 w-2.5 rounded-full ${item.swatch}`} />
+                  <span className="font-medium">{item.label}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Alert Confirm Modal */}
@@ -264,24 +373,6 @@ export default function Map({ detections = [], center = [-23.8859, 31.5205], zoo
         onClose={() => setIsAlertModalOpen(false)}
         onConfirm={handleConfirmAlert}
       />
-
-      {/* Add pulse animation to head */}
-      <style>{`
-        @keyframes pulse {
-          0% {
-            transform: scale(1);
-            opacity: 0.8;
-          }
-          50% {
-            transform: scale(1.5);
-            opacity: 0.4;
-          }
-          100% {
-            transform: scale(2);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </>
   )
 }
