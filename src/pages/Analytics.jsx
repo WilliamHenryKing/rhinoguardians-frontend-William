@@ -132,7 +132,7 @@ export default function Analytics({ onAlert }) {
         <div className="bg-slate-900/50 border border-white/10 rounded-xl p-6">
           <h2 className="text-xl font-bold text-white mb-4">Detection Heatmap</h2>
           <div className="h-80">
-            <Map detections={detections} />
+            <Map detections={detections} className="h-full" />
           </div>
         </div>
 

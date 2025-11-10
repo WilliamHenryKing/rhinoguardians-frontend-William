@@ -166,6 +166,7 @@ export default function Dashboard({ onAlert }) {
               zoom={mapZoom}
               onMarkerClick={setSelectedDetection}
               onAlertCreated={handleAlertCreated}
+              className="h-full"
             />
           </div>
 
