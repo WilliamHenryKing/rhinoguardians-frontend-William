@@ -1,6 +1,8 @@
 import axios from 'axios'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+// Auth token for alert trigger endpoint (backend requires Bearer token)
+const AUTH_TOKEN = import.meta.env.VITE_AUTH_TOKEN || 'testtoken123'
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -87,6 +89,23 @@ export const fetchAlerts = async (limit = 20) => {
     return response.data.alerts || response.data
   } catch (error) {
     console.error('Failed to fetch alerts:', error)
+    throw error
+  }
+}
+
+/**
+ * Trigger an alert (requires authentication)
+ */
+export const triggerAlert = async (payload) => {
+  try {
+    const response = await api.post('/alerts/trigger', payload, {
+      headers: {
+        'Authorization': `Bearer ${AUTH_TOKEN}`
+      }
+    })
+    return response.data
+  } catch (error) {
+    console.error('Failed to trigger alert:', error)
     throw error
   }
 }

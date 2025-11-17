@@ -6,7 +6,7 @@ import DetectionCard from '../components/DetectionCard'
 import Sidebar from '../components/Sidebar'
 import ActiveAlertsPanel from '../components/ActiveAlertsPanel'
 import AlertDetailPanel from '../components/AlertDetailPanel'
-import { getMockDetections } from '../api/mockData'
+import { fetchDetections } from '../api/client'
 import { useAlertRanger } from '../context/AlertRangerContext'
 
 export default function Dashboard({ onAlert }) {
@@ -31,16 +31,18 @@ export default function Dashboard({ onAlert }) {
   const loadDetections = async () => {
     setLoading(true)
     try {
-      const data = await getMockDetections()
+      console.log('[Dashboard] Fetching detections from backend...')
+      const data = await fetchDetections({ limit: 50 })
       setDetections(data)
-      
+
       // Check for threats and send alert
-      const threats = data.filter(d => 
-        d.class_name?.toLowerCase().includes('human') || 
-        d.class_name?.toLowerCase().includes('poacher')
+      const threats = data.filter(d =>
+        d.class_name?.toLowerCase().includes('human') ||
+        d.class_name?.toLowerCase().includes('poacher') ||
+        d.class_name?.toLowerCase().includes('vehicle')
       )
-      
-      if (threats.length > 0) {
+
+      if (threats.length > 0 && onAlert) {
         onAlert({
           type: 'threat',
           title: 'Threat Detected',
@@ -48,12 +50,14 @@ export default function Dashboard({ onAlert }) {
         })
       }
     } catch (error) {
-      console.error('Failed to load detections:', error)
-      onAlert({
-        type: 'error',
-        title: 'Error',
-        message: 'Failed to load detection data'
-      })
+      console.error('[Dashboard] Failed to load detections:', error)
+      if (onAlert) {
+        onAlert({
+          type: 'error',
+          title: 'Backend Connection Error',
+          message: `Failed to load detection data: ${error.message}`
+        })
+      }
     } finally {
       setLoading(false)
     }

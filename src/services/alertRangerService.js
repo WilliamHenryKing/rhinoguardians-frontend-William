@@ -11,7 +11,7 @@
  * - GET /rangers/positions - Fetch ranger positions (optional)
  */
 
-import api from '../api/client'
+import api, { triggerAlert as apiTriggerAlert } from '../api/client'
 import {
   AlertStatus,
   AlertSeverity,
@@ -65,23 +65,19 @@ export const triggerAlert = async (detection, overrides = {}) => {
   try {
     console.log('[AlertRangerService] Triggering alert:', payload)
 
-    const response = await api.post('/alerts/trigger', payload)
+    // Use API client's triggerAlert (includes authentication)
+    const response = await apiTriggerAlert(payload)
 
     // Backend should return full alert object
-    const alert = normalizeAlert(response.data)
+    const alert = normalizeAlert(response)
 
     console.log('[AlertRangerService] Alert created:', alert)
     return alert
   } catch (error) {
     console.error('[AlertRangerService] Failed to trigger alert:', error)
 
-    // Check if backend is not implemented
-    if (error.message.includes('404') || error.message.includes('No response')) {
-      // Return mock alert for development/demo
-      console.warn('[AlertRangerService] Backend not available, creating local mock alert')
-      return createMockAlert(detection, overrides)
-    }
-
+    // DO NOT fall back to mock data - per requirements
+    // Just throw the error and let the UI handle it
     throw error
   }
 }
@@ -111,12 +107,8 @@ export const fetchAlerts = async (filters = {}) => {
   } catch (error) {
     console.error('[AlertRangerService] Failed to fetch alerts:', error)
 
-    // Graceful degradation
-    if (error.message.includes('404') || error.message.includes('No response')) {
-      console.warn('[AlertRangerService] Backend not available, returning empty list')
-      return []
-    }
-
+    // DO NOT fall back to mock data - per requirements
+    // Just throw the error and let the UI handle it
     throw error
   }
 }
@@ -166,12 +158,8 @@ export const fetchRangerPositions = async () => {
   } catch (error) {
     console.error('[AlertRangerService] Failed to fetch ranger positions:', error)
 
-    // Graceful degradation
-    if (error.message.includes('404')) {
-      console.warn('[AlertRangerService] Ranger positions endpoint not implemented')
-      return []
-    }
-
+    // Ranger positions is an optional feature - log but don't fail
+    // Return empty array to allow app to continue functioning
     return []
   }
 }
@@ -206,37 +194,8 @@ const normalizeAlert = (rawAlert) => {
   }
 }
 
-/**
- * Create a mock alert for development when backend is unavailable
- *
- * This allows the frontend to function with full UI/UX even without backend
- */
-const createMockAlert = (detection, overrides = {}) => {
-  const alertId = generateAlertId()
-
-  return {
-    id: alertId,
-    detectionId: detection.id,
-    source: overrides.source || deriveAlertSource(detection),
-    type: overrides.type || deriveAlertType(detection.class_name),
-    severity: overrides.severity || deriveAlertSeverity(detection),
-    status: AlertStatus.SENT,
-    location: {
-      lat: detection.gps_lat,
-      lng: detection.gps_lng,
-      zoneLabel: overrides.zoneLabel || null
-    },
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: overrides.createdBy || 'Operator 1',
-    notes: overrides.notes || '',
-    deliveryChannelStatus: ['sms_pending'],
-    acknowledgedAt: null,
-    resolvedAt: null,
-    rangerAssigned: null,
-    _isMock: true // Flag for debugging
-  }
-}
+// Removed createMockAlert function - per requirements, do NOT fall back to mock data
+// When backend is unavailable, errors should be shown to the user
 
 /**
  * Check if alert feature is enabled

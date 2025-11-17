@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { FiTrendingUp, FiPieChart, FiActivity, FiTarget } from 'react-icons/fi'
 import Map from '../components/Map'
-import { getMockDetections } from '../api/mockData'
+import { fetchDetections, fetchAnalytics } from '../api/client'
 
 export default function Analytics({ onAlert }) {
   const [detections, setDetections] = useState([])
+  const [backendAnalytics, setBackendAnalytics] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     loadAnalytics()
@@ -14,30 +16,52 @@ export default function Analytics({ onAlert }) {
 
   const loadAnalytics = async () => {
     setLoading(true)
+    setError(null)
     try {
-      const data = await getMockDetections()
-      setDetections(data)
+      // Fetch detections from backend
+      console.log('[Analytics] Fetching detections from backend...')
+      const detectionsData = await fetchDetections({ limit: 100 })
+      setDetections(detectionsData)
+
+      // Try to fetch analytics from backend (may not be implemented yet)
+      try {
+        console.log('[Analytics] Fetching analytics from backend...')
+        const analyticsData = await fetchAnalytics()
+        setBackendAnalytics(analyticsData)
+        console.log('[Analytics] Backend analytics loaded:', analyticsData)
+      } catch (analyticsError) {
+        console.warn('[Analytics] Backend analytics endpoint not available, computing from detections:', analyticsError.message)
+        // Don't show error for missing analytics endpoint - compute locally instead
+      }
     } catch (error) {
-      console.error('Failed to load analytics:', error)
-      onAlert({
-        type: 'error',
-        title: 'Error',
-        message: 'Failed to load analytics data'
-      })
+      console.error('[Analytics] Failed to load analytics:', error)
+      setError(error.message)
+
+      // Show error notification when backend is unavailable
+      if (onAlert) {
+        onAlert({
+          type: 'error',
+          title: 'Backend Connection Error',
+          message: `Failed to load analytics data: ${error.message}`
+        })
+      }
     } finally {
       setLoading(false)
     }
   }
 
-  // Calculate analytics
-  const analytics = {
+  // Use backend analytics if available, otherwise compute from detections
+  const analytics = backendAnalytics || {
     totalDetections: detections.length,
     rhinoCount: detections.filter(d => d.class_name?.toLowerCase().includes('rhino')).length,
-    threatCount: detections.filter(d => 
-      d.class_name?.toLowerCase().includes('human') || 
-      d.class_name?.toLowerCase().includes('poacher')
+    threatCount: detections.filter(d =>
+      d.class_name?.toLowerCase().includes('human') ||
+      d.class_name?.toLowerCase().includes('poacher') ||
+      d.class_name?.toLowerCase().includes('vehicle')
     ).length,
-    avgConfidence: (detections.reduce((sum, d) => sum + d.confidence, 0) / detections.length * 100).toFixed(1),
+    avgConfidence: detections.length > 0
+      ? (detections.reduce((sum, d) => sum + d.confidence, 0) / detections.length * 100).toFixed(1)
+      : 0,
     detectionsByClass: detections.reduce((acc, d) => {
       acc[d.class_name] = (acc[d.class_name] || 0) + 1
       return acc
@@ -57,6 +81,32 @@ export default function Analytics({ onAlert }) {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3)
 
+  // Show error state if data couldn't be loaded
+  if (error && detections.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
+            Analytics Dashboard
+          </h1>
+          <p className="text-sm md:text-base text-slate-400">
+            Statistical insights and detection patterns
+          </p>
+        </div>
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6">
+          <h3 className="text-xl font-bold text-red-400 mb-2">Backend Connection Failed</h3>
+          <p className="text-red-300 mb-4">{error}</p>
+          <button
+            onClick={loadAnalytics}
+            className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -66,6 +116,8 @@ export default function Analytics({ onAlert }) {
         </h1>
         <p className="text-sm md:text-base text-slate-400">
           Statistical insights and detection patterns
+          {backendAnalytics && <span className="text-emerald-400 ml-2">(Backend Data)</span>}
+          {!backendAnalytics && detections.length > 0 && <span className="text-yellow-400 ml-2">(Computed Locally)</span>}
         </p>
       </div>
 

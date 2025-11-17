@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { FiSearch, FiDownload, FiFilter, FiX } from 'react-icons/fi'
 import DetectionCard from '../components/DetectionCard'
 import Sidebar from '../components/Sidebar'
-import { getMockDetections } from '../api/mockData'
+import { fetchDetections } from '../api/client'
 
 export default function History({ onAlert }) {
   const [detections, setDetections] = useState([])
@@ -23,15 +23,18 @@ export default function History({ onAlert }) {
   const loadHistory = async () => {
     setLoading(true)
     try {
-      const data = await getMockDetections()
+      console.log('[History] Fetching detections from backend...')
+      const data = await fetchDetections({ limit: 100 })
       setDetections(data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)))
     } catch (error) {
-      console.error('Failed to load history:', error)
-      onAlert({
-        type: 'error',
-        title: 'Error',
-        message: 'Failed to load detection history'
-      })
+      console.error('[History] Failed to load history:', error)
+      if (onAlert) {
+        onAlert({
+          type: 'error',
+          title: 'Backend Connection Error',
+          message: `Failed to load detection history: ${error.message}`
+        })
+      }
     } finally {
       setLoading(false)
     }
